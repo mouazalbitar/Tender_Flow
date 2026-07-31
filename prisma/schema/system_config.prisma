@@ -1,0 +1,7 @@
+model SystemConfig {
+  configKey   String  @id @map("config_key")
+  configValue String  @map("config_value") @db.Text
+  description String? @db.Text
+
+  @@map("SYSTEM_CONFIG")
+}

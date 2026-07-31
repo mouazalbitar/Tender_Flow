@@ -1,0 +1,14 @@
+model BidEvaluation {
+  id                Int      @id @default(autoincrement())
+  bidId             Int      @map("bid_id")
+  committeeMemberId Int      @map("committee_member_id")
+  score             Decimal  @db.Decimal(5, 2) // 0 - 100
+  comments          String?  @db.Text
+  evaluatedAt       DateTime @default(now()) @map("evaluated_at")
+
+  // Relations
+  bid             Bid             @relation(fields: [bidId], references: [id])
+  committeeMember CommitteeMember @relation(fields: [committeeMemberId], references: [id])
+
+  @@map("BID_EVALUATION")
+}

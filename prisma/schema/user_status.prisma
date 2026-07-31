@@ -1,0 +1,10 @@
+model UserStatus {
+  id           Int    @id @default(autoincrement()) @db.UnsignedTinyInt
+  statusName   String @map("status_name")
+  statusNameAr String @map("status_name_ar")
+  description  String
+
+  users User[]
+
+  @@map("USER_STATUS")
+}

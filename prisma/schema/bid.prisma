@@ -1,0 +1,30 @@
+model Bid {
+  id                  Int       @id @default(autoincrement())
+  tenderId            Int       @map("tender_id")
+  bidderOrgId         Int       @map("bidder_org_id")
+  submittedBy         Int       @map("submitted_by")
+  statusId            Int       @map("status_id") @db.UnsignedTinyInt
+  bidAmount           Decimal   @map("bid_amount") @db.Decimal(15, 2)
+  discountPercentage  Decimal?  @default(0) @map("discount_percentage") @db.Decimal(5, 2)
+  executionPeriodDays Int?      @map("execution_period_days")
+  technicalProposal   String?   @map("technical_proposal") @db.Text
+  financialProposal   String?   @map("financial_proposal") @db.Text
+  submittedAt         DateTime  @default(now()) @map("submitted_at")
+  evaluatedAt         DateTime? @map("evaluated_at")
+
+  // Relations
+  tender               Tender                @relation(fields: [tenderId], references: [id])
+  bidderOrganization   Organization          @relation(fields: [bidderOrgId], references: [id])
+  submitter            User                  @relation(fields: [submittedBy], references: [id])
+  status               BidStatus             @relation(fields: [statusId], references: [id])
+  documents            BidDocument[]
+  evaluations          BidEvaluation[]
+  committeeEvaluations CommitteeEvaluation[]
+  guarantees           BidGuarantee[]
+  statusHistories      BidStatusHistory[]
+  contracts            Contract[]
+  notifications        Notification[]
+  activityLogs         ActivityLog[]
+
+  @@map("BID")
+}

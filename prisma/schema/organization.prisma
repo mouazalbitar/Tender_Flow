@@ -1,0 +1,22 @@
+model Organization {
+  id        Int     @id @default(autoincrement())
+  typeId    Int     @map("type_id") @db.UnsignedTinyInt
+  statusId  Int     @map("status_id") @db.UnsignedTinyInt
+  orgName   String  @map("org_name")
+  taxNumber String? @unique @map("tax_number")
+  address   String? @map("_address")
+  phone     String?
+  email     String? @unique
+  logoUrl   String? @map("logo_url")
+
+  type   OrganizationType   @relation(fields: [typeId], references: [id])
+  status OrganizationStatus @relation(fields: [statusId], references: [id])
+
+  users         User[]
+  documents     OrganizationDocument[]
+  statusHistory OrganizationStatusHistory[]
+  bids          Bid[]
+  tenders       Tender[]
+
+  @@map("ORGANIZATION")
+}

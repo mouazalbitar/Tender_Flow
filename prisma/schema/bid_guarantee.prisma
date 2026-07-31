@@ -1,0 +1,18 @@
+model BidGuarantee {
+  id              Int       @id @default(autoincrement())
+  bidId           Int       @map("bid_id")
+  guaranteeType   String    @map("guarantee_type") // BANK / CASH / INSURANCE
+  guaranteeNumber String    @map("guarantee_number")
+  amount          Decimal   @db.Decimal(15, 2)
+  issuingBank     String?   @map("issuing_bank")
+  issueDate       DateTime? @map("issue_date") @db.Date
+  expiryDate      DateTime? @map("expiry_date") @db.Date
+  attachmentUrl   String?   @map("attachment_url")
+  isValidated     Boolean   @default(false) @map("is_validated")
+  validatedAt     DateTime? @map("validated_at")
+
+  // Relations
+  bid Bid @relation(fields: [bidId], references: [id])
+
+  @@map("BID_GUARANTEE")
+}

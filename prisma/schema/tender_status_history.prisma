@@ -1,0 +1,17 @@
+model TenderStatusHistory {
+  id          Int      @id @default(autoincrement())
+  tenderId    Int      @map("tender_id")
+  oldStatusId Int      @map("old_status_id") @db.UnsignedTinyInt
+  newStatusId Int      @map("new_status_id") @db.UnsignedTinyInt
+  changedBy   Int      @map("changed_by")
+  reason      String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  tender    Tender       @relation(fields: [tenderId], references: [id])
+  oldStatus TenderStatus @relation("TenderOldStatus", fields: [oldStatusId], references: [id])
+  newStatus TenderStatus @relation("TenderNewStatus", fields: [newStatusId], references: [id])
+  user      User         @relation(fields: [changedBy], references: [id])
+
+  @@map("TENDER_STATUS_HISTORY")
+}

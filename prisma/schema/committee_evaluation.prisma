@@ -1,0 +1,15 @@
+model CommitteeEvaluation {
+  id            Int      @id @default(autoincrement())
+  bidId         Int      @map("bid_id")
+  committeeId   Int      @map("committee_id")
+  avgScore      Decimal  @map("avg_score") @db.Decimal(5, 2)
+  finalComments String?  @map("final_comments") @db.Text
+  finalDecision String   @map("final_decision") // ACCEPT / REJECT / CONDITIONAL
+  decidedAt     DateTime @default(now()) @map("decided_at")
+
+  // Relations
+  bid       Bid       @relation(fields: [bidId], references: [id])
+  committee Committee @relation(fields: [committeeId], references: [id])
+
+  @@map("COMMITTEE_EVALUATION")
+}

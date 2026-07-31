@@ -1,0 +1,35 @@
+model User {
+  id          Int     @id @default(autoincrement())
+  orgId       Int     @map("org_id")
+  roleId      Int     @map("role_id")
+  statusId    Int     @map("status_id") @db.UnsignedTinyInt
+  fName       String  @map("f_name")
+  lName       String  @map("l_name")
+  fatherName  String? @map("father_name")
+  nationalNum String? @unique @map("national_num")
+  email       String? @unique
+  phone       String? @unique
+  username    String? @unique
+  password    String
+  deviceToken String? @map("device_token")
+
+  org    Organization @relation(fields: [orgId], references: [id])
+  role   Role         @relation(fields: [roleId], references: [id])
+  status UserStatus   @relation(fields: [statusId], references: [id])
+
+  verifiedDocs          OrganizationDocument[]
+  statusChanges         OrganizationStatusHistory[]
+  activityLogs          ActivityLog[]
+  bids                  Bid[]
+  bidDocuments          BidDocument[]
+  bidStatusHistories    BidStatusHistory[]
+  committeeMembers      CommitteeMember[]
+  notifications         Notification[]
+  systemEmployee        SystemEmployee?
+  tenders               Tender[]
+  tenderDocuments       TenderDocument[]
+  tenderReports         TenderReport[]
+  tenderStatusHistories TenderStatusHistory[]
+
+  @@map("USER")
+}

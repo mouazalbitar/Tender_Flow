@@ -1,0 +1,11 @@
+model Permission {
+  id               Int    @id @default(autoincrement())
+  permissionCode   String @unique @map("permission_code")
+  permissionName   String @map("permission_name")
+  permissionNameAr String @map("permission_name_ar")
+  module           String
+
+  rolePermissions RolePermission[]
+
+  @@map("PERMISSION")
+}

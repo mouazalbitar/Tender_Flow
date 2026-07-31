@@ -1,0 +1,10 @@
+model OrganizationType {
+  id            Int            @id @default(autoincrement()) @db.UnsignedTinyInt
+  name          String         @map("_name")
+  nameAr        String         @map("_name_ar")
+  description   String
+  organizations Organization[]
+  roles         Role[]
+
+  @@map("ORGANIZATION_TYPE")
+}

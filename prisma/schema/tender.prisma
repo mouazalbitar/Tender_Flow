@@ -1,0 +1,39 @@
+model Tender {
+  id                  Int       @id @default(autoincrement())
+  publisherOrgId      Int       @map("publisher_org_id")
+  categoryId          Int       @map("category_id")
+  createdBy           Int       @map("created_by")
+  statusId            Int       @map("status_id") @db.UnsignedTinyInt
+  tenderNumber        String    @unique @map("tender_number")
+  title               String
+  description         String?   @db.Text
+  estimatedValue      Decimal?  @map("estimated_value") @db.Decimal(15, 2)
+  currency            String    @default("SYP") // SYP / USD
+  tenderType          String    @map("tender_type") // OPEN / LIMITED / DIRECT
+  guaranteePercentage Decimal?  @map("guarantee_percentage") @db.Decimal(5, 2)
+  guaranteeAmount     Decimal?  @map("guarantee_amount") @db.Decimal(15, 2)
+  publishDate         DateTime? @map("publish_date") @db.Date
+  closingDate         DateTime? @map("closing_date") @db.Date
+  bidOpeningDate      DateTime? @map("bid_opening_date") @db.Date
+  executionPeriodDays Int?      @map("execution_period_days")
+  technicalConditions String?   @map("technical_conditions") @db.Text
+  financialConditions String?   @map("financial_conditions") @db.Text
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  publisherOrganization Organization          @relation(fields: [publisherOrgId], references: [id])
+  category              TenderCategory        @relation(fields: [categoryId], references: [id])
+  creator               User                  @relation(fields: [createdBy], references: [id])
+  status                TenderStatus          @relation(fields: [statusId], references: [id])
+  documents             TenderDocument[]
+  statusHistories       TenderStatusHistory[]
+  bids                  Bid[]
+  committees            Committee[]
+  contracts             Contract[]
+  notifications         Notification[]
+  activityLogs          ActivityLog[]
+  reports               TenderReport[]
+
+  @@map("TENDER")
+}

@@ -1,0 +1,17 @@
+model OrganizationDocument {
+  id              Int       @id @default(autoincrement())
+  orgId           Int       @map("org_id")
+  docTypeId       Int       @map("doc_type_id") @db.UnsignedTinyInt
+  fileUrl         String    @map("file_url")
+  fileSizeBytes   Int       @map("file_size_bytes")
+  isVerified      Boolean   @default(false) @map("is_verified")
+  verifiedBy      Int?      @map("verified_by")
+  verifiedAt      DateTime? @map("verified_at")
+  rejectionReason String?   @map("rejection_reason") @db.Text
+
+  org      Organization        @relation(fields: [orgId], references: [id])
+  docType  OrganizationDocType @relation(fields: [docTypeId], references: [id])
+  verifier User?               @relation(fields: [verifiedBy], references: [id])
+
+  @@map("ORGANIZATION_DOCUMENT")
+}

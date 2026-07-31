@@ -1,0 +1,14 @@
+model TenderReport {
+  reportId    Int      @id @default(autoincrement()) @map("report_id")
+  tenderId    Int      @map("tender_id")
+  generatedBy Int      @map("generated_by")
+  reportType  String   @map("report_type") // SUMMARY / FINANCIAL / TECHNICAL / COMPARATIVE
+  fileUrl     String   @map("file_url")
+  generatedAt DateTime @default(now()) @map("generated_at")
+
+  // Relations
+  tender Tender @relation(fields: [tenderId], references: [id])
+  user   User   @relation(fields: [generatedBy], references: [id])
+
+  @@map("TENDER_REPORT")
+}

@@ -1,0 +1,12 @@
+model TenderStatus {
+  id           Int    @id @default(autoincrement()) @db.UnsignedTinyInt
+  statusName   String @map("status_name") // DRAFT / PUBLISHED / CLOSED / EVALUATING / AWARDED / CANCELLED
+  statusNameAr String @map("status_name_ar")
+
+  // Relations
+  tenders          Tender[]
+  oldStatusHistory TenderStatusHistory[] @relation("TenderOldStatus")
+  newStatusHistory TenderStatusHistory[] @relation("TenderNewStatus")
+
+  @@map("TENDER_STATUS")
+}

@@ -1,0 +1,12 @@
+model BidDocType {
+  id          Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+  typeName    String  @map("type_name")
+  typeNameAr  String  @map("type_name_ar")
+  isRequired  Boolean @default(false) @map("is_required")
+  description String? @db.Text
+
+  // Relations
+  bidDocuments BidDocument[]
+
+  @@map("BID_DOC_TYPE")
+}

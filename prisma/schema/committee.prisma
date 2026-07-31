@@ -1,0 +1,14 @@
+model Committee {
+  id            Int      @id @default(autoincrement())
+  tenderId      Int      @map("tender_id")
+  committeeType Int      @map("committee_type") @db.UnsignedTinyInt
+  formedAt      DateTime @default(now()) @map("formed_at")
+
+  // Relations
+  tender      Tender                @relation(fields: [tenderId], references: [id])
+  type        CommitteeType         @relation(fields: [committeeType], references: [id])
+  members     CommitteeMember[]
+  evaluations CommitteeEvaluation[]
+
+  @@map("COMMITTEE")
+}
