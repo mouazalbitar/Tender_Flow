@@ -23,6 +23,7 @@ app.use(logger);
 app.use(express.static("welcome_page"));
 
 // routes
+
 app.use("/api/upload", require("./routes/upload"));
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./welcome_page/welcome.html"));
