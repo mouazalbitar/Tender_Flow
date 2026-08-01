@@ -66,7 +66,7 @@ function update_user_validation(obj) {
     return schema.validate(obj);
 }
 
-moudule.exports = {
+module.exports = {
     create_user_validation,
     login_validation,
     update_user_validation
