@@ -1,17 +1,13 @@
 const mongoose = require('mongoose');
 
 const roleSchema = new mongoose.Schema({
-  org_type_id: {
-    type: Number,
-    required: true
-  },
   role_name: {
     type: String,
     required: true,
     enum: [
       'PUB_ADMIN', 'PUB_MANAGER', 'PUB_EMPLOYEE', 
       'BID_ADMIN', 'BID_MANAGER', 'BID_EMPLOYEE', 
-      'SUPER_ADMIN', 'COMPANY_APPROVER', 'AUDITOR', 'SUPPORT'
+      'SUPER_ADMIN', 'COMPANY_APPROVER', 'SUPPORT'
     ]
   },
   role_name_ar: {
@@ -20,7 +16,7 @@ const roleSchema = new mongoose.Schema({
     enum: [
       'مدير ناشر', 'مدير مناقصات', 'موظف ناشرة', 
       'مدير منفذة', 'مدير عروض', 'موظف منفذ', 
-      'سوبر أدمن', 'موظف قبول', 'مدقق', 'دعم فني'
+      'سوبر أدمن', 'موظف قبول', 'دعم فني'
     ]
   },
   description: {
@@ -33,4 +29,5 @@ const roleSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Role', roleSchema);
+const Role = mongoose.model('Role', roleSchema);
+module.exports = Role;
