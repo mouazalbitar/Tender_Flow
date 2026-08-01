@@ -2,12 +2,25 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        org_id: { type: mongoose.Schema.Types.ObjectId, ref: "Organization" },
-        role_id: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
+        org_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Organization",
+            required: false,
+        },
+        role_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Role",
+            required: false,
+        },
         status: {
             type: String,
             enum: ["PENDING", "ACTIVE", "REJECTED", "SUSPENDED", "BANNED"],
             default: "PENDING",
+        },
+        type: {
+            type: String,
+            enum: ["ADMIN", "PUBLISHER", "EXECUTOR", "SYSTEM_EMPLOYEE"],
+            required: true,
         },
         f_name: {
             type: String,
@@ -43,18 +56,8 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        device_token: String,
-
-        // بيانات خاصة بموظفي النظام (Null إذا لم يكن موظف نظام)
-        system_employee_info: {
-            employee_code: String,
-            department: {
-                type: String,
-                enum: ["APPROVAL", "AUDIT", "SUPPORT", "ADMIN"],
-            },
-            hired_at: {
-                Date,
-            },
+        device_token: {
+            type: String,
         },
     },
     { timestamps: true },
