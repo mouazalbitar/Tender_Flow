@@ -14,7 +14,7 @@ const {
  * @access public
  */
 router.get(
-    "/orgs",
+    "/",
     asyncHandler(async (req, res) => {
         const orgs = await Organization.find();
         res.status(200).json({
@@ -32,7 +32,7 @@ router.get(
  * @access public
  */
 router.get(
-    "/orgs/:id",
+    "/:id",
     asyncHandler(async (req, res) => {
         const org = await Organization.findById(req.params.id);
         if (!org) {
@@ -57,7 +57,7 @@ router.get(
  * @access public
  */
 router.post(
-    "/orgs",
+    "/",
     asyncHandler(async (req, res) => {
         const { error } = create_org_validation(req.body);
         if (error) {
@@ -85,7 +85,7 @@ router.post(
  * @access public
  */
 router.put(
-    "/orgs/:id",
+    "/:id",
     asyncHandler(async (req, res) => {
         const { error } = update_org_validation(req.body);
         if (error) {
@@ -123,7 +123,7 @@ router.put(
  * @access public
  */
 router.delete(
-    "/orgs/:id",
+    "/:id",
     asyncHandler(async (req, res) => {
         const org = await Organization.findByIdAndDelete(req.params.id);
         if (!org) {
