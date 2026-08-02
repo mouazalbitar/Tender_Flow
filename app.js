@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const { not_found, error_handler } = require("./middlewares/errors");
 const logger = require("./middlewares/logger");
+const auth_path = require("./routes/auth");
 const org_path = require("./routes/orgs");
 const path = require("path"); // for welcome page
 const dotenv = require("dotenv");
@@ -24,6 +25,7 @@ app.use(logger);
 app.use(express.static("welcome_page"));
 
 // routes
+app.use("/api/auth", auth_path);
 app.use("/api/orgs", org_path);
 app.use("/api/upload", require("./routes/upload"));
 app.get("/", (req, res) => {
