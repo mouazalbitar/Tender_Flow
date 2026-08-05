@@ -7,6 +7,7 @@ const {
     update_org_validation,
 } = require("../validators/org_validation");
 
+
 /**
  * @description get all organizations
  * @route /api/orgs

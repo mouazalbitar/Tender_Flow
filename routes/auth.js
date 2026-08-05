@@ -8,6 +8,7 @@ const {
     update_user_validation,
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 /**
  * @description register a new user
@@ -39,13 +40,11 @@ router.post(
         req.body.password = await bcrypt.hash(req.body.password, salt);
         user = new User(req.body);
         const result = await user.save();
-        const token = null;
-        const {password, ...user_data} = result._doc;
+        const { password, ...user_data } = result._doc;
         res.status(201).json({
             message: "The Operation was Successful.",
             data: user_data,
             status: 201,
-            token: token
         });
     }),
 );
@@ -68,7 +67,6 @@ router.post(
             });
         }
         const user = await User.findOne({ username: req.body.username });
-        const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (!user) {
             return res.status(404).json({
                 message: "Invalid username or password.",
@@ -76,6 +74,7 @@ router.post(
                 status: 404,
             });
         }
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (!isMatch) {
             return res.status(404).json({
                 message: "Invalid username or password.",
@@ -83,12 +82,19 @@ router.post(
                 status: 404,
             });
         }
+        const token = jwt.sign(
+            { id: user._id, type: user.type },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "4h" },
+        );
+        const { password, ...user_data } = user._doc;
         res.status(200).json({
             message: "The Operation was Successful.",
-            data: user,
+            data: user_data,
             status: 200,
+            token: token,
         });
     }),
 );
 
-module.exports = { router };
+module.exports = router;

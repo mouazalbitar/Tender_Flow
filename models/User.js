@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
+            trim: true
         },
         phone: {
             type: String,
@@ -51,10 +52,16 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
+            min: 3,
+            max: 30,
+            trim: true
         },
         password: {
             type: String,
             required: true,
+            min: 6,
+            max: 30,
+            trim: true
         },
         device_token: {
             type: String,
