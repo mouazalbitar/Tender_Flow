@@ -12,7 +12,7 @@ const OrganizationSchema = new mongoose.Schema(
         },
         _type: {
             type: String,
-            enum: ["Publisher", "Implementing"],
+            enum: ["PUBLISHER", "EXECUTOR", "ADMIN"],
             required: true,
         },
         _status: {

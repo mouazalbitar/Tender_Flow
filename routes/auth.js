@@ -5,11 +5,12 @@ const asyncHandler = require("express-async-handler");
 const {
     create_user_validation,
     login_validation,
-    update_user_validation,
+    update_user_validation
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verify_token } = require("../middlewares/verify_token");
+const { authorizeRoles } = require("../middlewares/role_check");
 
 /**
  * @description register a new mobile user
@@ -59,10 +60,12 @@ router.post(
 router.post(
     "/web/register",
     verify_token,
+    authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
+        console.log(req.user);
         if (req.user.id !== req.params.id)
             return res.status(403).json({
-                message: "Access denied, no id match.",
+                message: "Access denied.",
                 data: null,
                 status: 403,
             });
@@ -139,7 +142,7 @@ router.post(
         const token = jwt.sign(
             { id: user._id, type: user.type },
             process.env.JWT_SECRET_KEY,
-            { expiresIn: "4h" },
+            { expiresIn: "8h" },
         );
         const { password, ...user_data } = user._doc;
         res.status(200).json({
@@ -191,7 +194,7 @@ router.post(
         const token = jwt.sign(
             { id: user._id, type: user.type },
             process.env.JWT_SECRET_KEY,
-            { expiresIn: "4h" },
+            { expiresIn: "8h" },
         );
         const { password, ...user_data } = user._doc;
         res.status(200).json({

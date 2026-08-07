@@ -6,7 +6,7 @@ const org_schema = {
     _address: joi.string().min(5).max(100).label("Address"),
     _type: joi
         .string()
-        .valid("Publisher", "Implementing")
+        .valid("PUBLISHER", "EXECUTOR", "ADMIN")
         .label("Organization Type"),
     _status: joi
         .string()
