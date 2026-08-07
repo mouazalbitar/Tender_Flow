@@ -40,7 +40,7 @@ function create_user_validation(obj) {
 function login_validation(obj) {
     const schema = joi.object({
         username: user_schema.username.required(),
-        password: user_schema.password.required()
+        password: user_schema.password.required(),
     }).messages(messages.messages_en);
 
     return schema.validate(obj);
