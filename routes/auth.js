@@ -9,6 +9,7 @@ const {
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { verify_token } = require("../middlewares/verify_token");
 
 /**
  * @description register a new mobile user
@@ -57,7 +58,14 @@ router.post(
  */
 router.post(
     "/web/register",
+    verify_token,
     asyncHandler(async (req, res) => {
+        if (req.user.id !== req.params.id)
+            return res.status(403).json({
+                message: "Access denied, no id match.",
+                data: null,
+                status: 403,
+            });
         const { error } = create_user_validation(req.body);
         if (error) {
             return res.status(400).json({
@@ -161,28 +169,25 @@ router.post(
             });
         }
         const user = await User.findOne({ username: req.body.username });
-        if (!user) {
+        if (!user)
             return res.status(404).json({
                 message: "Invalid username or password.",
                 data: null,
                 status: 404,
             });
-        }
-        if (user.type !== "EXECUTOR") {
+        if (user.type !== "EXECUTOR")
             return res.status(403).json({
                 message: "Access denied.",
                 data: null,
                 status: 403,
             });
-        }
         const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if (!isMatch) {
+        if (!isMatch)
             return res.status(404).json({
                 message: "Invalid username or password.",
                 data: null,
                 status: 404,
             });
-        }
         const token = jwt.sign(
             { id: user._id, type: user.type },
             process.env.JWT_SECRET_KEY,
