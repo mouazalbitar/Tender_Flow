@@ -8,7 +8,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app"
+    "start": "nodemon app",
+    "seed:send": "node seed/seeder -s",
+    "seed:delete": "node seed/seeder -d"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
