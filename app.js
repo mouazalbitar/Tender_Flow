@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
+const { connectToDB } = require("./config/db");
 const { not_found, error_handler } = require("./middlewares/errors");
 const logger = require("./middlewares/logger");
 const auth_path = require("./routes/auth");
@@ -10,12 +10,7 @@ const dotenv = require("dotenv");
 dotenv.config({ path: ".env" });
 
 // connect to database
-try {
-    mongoose.connect(process.env.MONGOOSEDB);
-    console.log("connected to database.");
-} catch (err) {
-    console.error("failed to connect to database,", err);
-}
+connectToDB();
 
 // apply middlewares
 app.use(express.json());

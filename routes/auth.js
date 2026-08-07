@@ -63,12 +63,6 @@ router.post(
     authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
         console.log(req.user);
-        if (req.user.id !== req.params.id)
-            return res.status(403).json({
-                message: "Access denied.",
-                data: null,
-                status: 403,
-            });
         const { error } = create_user_validation(req.body);
         if (error) {
             return res.status(400).json({
