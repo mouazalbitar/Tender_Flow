@@ -6,6 +6,7 @@ require("dotenv").config();
 // connecting to database
 connectToDB();
 
+// send users to database
 const send_users = async () => {
     try {
         await User.insertMany(users);
@@ -17,6 +18,7 @@ const send_users = async () => {
     }
 };
 
+// delete all users from database
 const delete_users = async () => {
     try {
         await User.deleteMany();

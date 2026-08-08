@@ -52,48 +52,6 @@ router.post(
 );
 
 /**
- * @description register a new web user
- * @route /api/auth/web/register
- * @method POST
- * @access private
- */
-router.post(
-    "/web/register",
-    verify_token,
-    authorizeRoles("ADMIN"),
-    asyncHandler(async (req, res) => {
-        console.log(req.user);
-        const { error } = create_user_validation(req.body);
-        if (error) {
-            return res.status(400).json({
-                message: `Validation Error: ${error.details[0].message}`,
-                data: null,
-                status: 400,
-            });
-        }
-
-        let user = await User.findOne({ username: req.body.username });
-        if (user) {
-            return res.status(400).json({
-                message: "Username already exists.",
-                data: null,
-                status: 400,
-            });
-        }
-        const salt = await bcrypt.genSalt(10);
-        req.body.password = await bcrypt.hash(req.body.password, salt);
-        user = new User(req.body);
-        const result = await user.save();
-        const { password, ...user_data } = result._doc;
-        res.status(201).json({
-            message: "The Operation was Successful.",
-            data: user_data,
-            status: 201,
-        });
-    }),
-);
-
-/**
  * @description login a website user
  * @route /api/auth/web/login
  * @method POST

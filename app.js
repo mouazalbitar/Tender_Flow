@@ -17,6 +17,7 @@ app.use(logger);
 
 // routes
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/users", require("./routes/users"));
 app.use("/api/orgs", require("./routes/orgs"));
 app.use("/api/upload", require("./routes/upload"));
 
