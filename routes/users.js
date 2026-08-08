@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const { verify_token } = require("../middlewares/verify_token");
+const { authorizeRoles } = require("../middlewares/role_check");
 const { User } = require("../models/User");
-const { update_user_validation } = require("../validators/user_validation");
+const {
+    create_user_validation,
+    update_user_validation,
+} = require("../validators/user_validation");
 
 /**
  * @description get all users
