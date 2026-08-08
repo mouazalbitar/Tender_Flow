@@ -127,9 +127,10 @@ router.put(
                 status: 404,
             });
         }
+        const { password, ...user_data } = user._doc;
         res.status(200).json({
             message: "The Operation was Successful.",
-            data: user,
+            data: user_data,
             status: 200,
         });
     }),
@@ -153,9 +154,10 @@ router.delete(
                 status: 404,
             });
         }
+        const { password, ...user_data } = user._doc;
         res.status(200).json({
             message: "The Operation was Successful.",
-            data: user,
+            data: user_data,
             status: 200,
         });
     }),
@@ -177,6 +179,12 @@ router.put(
             { status: "ACTIVE" },
             { new: true },
         );
+         if (req.user.id === req.params.id)
+            return res.status(403).json({
+                message: "You cannot do it for yourself.",
+                data: null,
+                status: 403,
+            });
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
@@ -184,9 +192,16 @@ router.put(
                 status: 404,
             });
         }
+        if (req.user.id.toString() === req.params.id)
+            return res.status(403).json({
+                message: "You cannot ban yourself.",
+                data: null,
+                status: 403,
+            });
+        const { password, ...user_data } = user._doc;
         res.status(200).json({
             message: "The Operation was Successful.",
-            data: user,
+            data: user_data,
             status: 200,
         });
     }),
@@ -208,6 +223,12 @@ router.put(
             { status: "REJECTED" },
             { new: true },
         );
+        if (req.user.id === req.params.id)
+            return res.status(403).json({
+                message: "You cannot do it for yourself.",
+                data: null,
+                status: 403,
+            });
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
@@ -239,6 +260,12 @@ router.put(
             { status: "PENDING" },
             { new: true },
         );
+         if (req.user.id === req.params.id)
+            return res.status(403).json({
+                message: "You cannot do it for yourself.",
+                data: null,
+                status: 403,
+            });
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
@@ -270,6 +297,12 @@ router.put(
             { status: "BANNED" },
             { new: true },
         );
+         if (req.user.id === req.params.id)
+            return res.status(403).json({
+                message: "You cannot do it for yourself.",
+                data: null,
+                status: 403,
+            });
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",

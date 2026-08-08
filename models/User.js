@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-            enum: ["ADMIN", "PUBLISHER", "EXECUTOR", "SYSTEM_EMPLOYEE"],
+            enum: ["PUBLISHER", "EXECUTOR", "SYSTEM_EMPLOYEE"],
             required: true,
         },
         f_name: {
@@ -61,7 +61,8 @@ const userSchema = new mongoose.Schema(
             required: true,
             min: 6,
             max: 30,
-            trim: true
+            trim: true,
+            select: false
         },
         device_token: {
             type: String,

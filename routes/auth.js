@@ -1,12 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const { User } = require("../models/User");
+const { Organization } = require("../models/Organization");
 const asyncHandler = require("express-async-handler");
 const {
     create_user_validation,
+    create_mobile_user_validation,
     login_validation,
-    update_user_validation
+    update_user_validation,
 } = require("../validators/user_validation");
+const {
+    create_org_validation,
+    update_org_validation,
+} = require("../validators/org_validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verify_token } = require("../middlewares/verify_token");
@@ -21,7 +27,7 @@ const { authorizeRoles } = require("../middlewares/role_check");
 router.post(
     "/mob/register",
     asyncHandler(async (req, res) => {
-        const { error } = create_user_validation(req.body);
+        const { error } = create_mobile_user_validation(req.body);
         if (error) {
             return res.status(400).json({
                 message: `Validation Error: ${error.details[0].message}`,
@@ -33,14 +39,14 @@ router.post(
         let user = await User.findOne({ username: req.body.username });
         if (user) {
             return res.status(400).json({
-                message: "Username already exists.",
+                message: "User already exists.",
                 data: null,
                 status: 400,
             });
         }
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
-        user = new User(req.body);
+        user = new User({ ...req.body, type: "EXECUTOR" });
         const result = await user.save();
         const { password, ...user_data } = result._doc;
         res.status(201).json({
@@ -68,7 +74,7 @@ router.post(
                 status: 400,
             });
         }
-        const user = await User.findOne({ username: req.body.username });
+        const user = await User.findOne({ username: req.body.username }).select("+password");
         if (!user) {
             return res.status(404).json({
                 message: "Invalid username or password.",
@@ -123,7 +129,7 @@ router.post(
                 status: 400,
             });
         }
-        const user = await User.findOne({ username: req.body.username });
+        const user = await User.findOne({ username: req.body.username }).select("+password");
         if (!user)
             return res.status(404).json({
                 message: "Invalid username or password.",
