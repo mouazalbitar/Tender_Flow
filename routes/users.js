@@ -7,7 +7,9 @@ const { User } = require("../models/User");
 const {
     create_user_validation,
     update_user_validation,
+    change_user_status_validation,
 } = require("../validators/user_validation");
+const bcrypt = require("bcryptjs");
 
 /**
  * @description get all users
@@ -18,6 +20,7 @@ const {
 router.get(
     "/",
     verify_token,
+    authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
         const users = await User.find();
         res.status(200).json({
@@ -143,6 +146,130 @@ router.delete(
     verify_token,
     asyncHandler(async (req, res) => {
         const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                data: null,
+                status: 404,
+            });
+        }
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: user,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description change user status by id to ACTIVE
+ * @route /api/users/accept/:id
+ * @method PUT
+ * @access private
+ */
+router.put(
+    "/accept/:id",
+    verify_token,
+    authorizeRoles("ADMIN"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { status: "ACTIVE" },
+            { new: true },
+        );
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                data: null,
+                status: 404,
+            });
+        }
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: user,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description change user status by id to REJECTED
+ * @route /api/users/reject/:id
+ * @method PUT
+ * @access private
+ */
+router.put(
+    "/reject/:id",
+    verify_token,
+    authorizeRoles("ADMIN"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { status: "REJECTED" },
+            { new: true },
+        );
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                data: null,
+                status: 404,
+            });
+        }
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: user,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description change user status by id to PENDING, this fro mobile user
+ * @route /api/users/resend/:id
+ * @method PUT
+ * @access private
+ */
+router.put(
+    "/resend/:id",
+    verify_token,
+    authorizeRoles("ADMIN"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { status: "PENDING" },
+            { new: true },
+        );
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                data: null,
+                status: 404,
+            });
+        }
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: user,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description change user status by id to BANNED
+ * @route /api/users/ban/:id
+ * @method PUT
+ * @access private
+ */
+router.put(
+    "/ban/:id",
+    verify_token,
+    authorizeRoles("ADMIN"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { status: "BANNED" },
+            { new: true },
+        );
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
