@@ -12,12 +12,12 @@ const OrganizationSchema = new mongoose.Schema(
         },
         _type: {
             type: String,
-            enum: ["PUBLISHER", "EXECUTOR", "ADMIN"],
+            enum: ["PUBLISHER", "EXECUTOR", "SYSTEM"],
             required: true,
         },
         _status: {
             type: String,
-            enum: ["PENDING", "ACTIVE", "REJECTED", "SUSPENDED", "BANNED"],
+            enum: ["PENDING", "ACTIVE", "REJECTED", "BANNED"],
             default: "PENDING",
         },
         phone_number: {

@@ -48,7 +48,6 @@ function create_mobile_user_validation(obj) {
     const schema = joi
         .object({
             org_id: user_schema.org_id.optional(),
-            role_id: user_schema.role_id.optional(),
             f_name: user_schema.f_name.required(),
             l_name: user_schema.l_name.optional(),
             father_name: user_schema.father_name.optional(),
