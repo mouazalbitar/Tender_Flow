@@ -29,19 +29,34 @@ const OrganizationSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        commercial_register_num: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        commercial_register_date: {
+            type: Date,
+            required: true,
+        },
+        license_num: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        license_date: {
+            type: Date,
+            required: true,
+        },
         logo: {
             type: String,
-            required: false,
         },
 
         commercial_register: {
             type: String,
-            required: true,
         },
 
         license: {
             type: String,
-            required: true,
         },
     },
     { timestamps: true },

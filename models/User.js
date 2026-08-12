@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            trim: true
+            trim: true,
         },
         phone: {
             type: String,
@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
             unique: true,
             min: 3,
             max: 30,
-            trim: true
+            trim: true,
         },
         password: {
             type: String,
@@ -63,22 +63,27 @@ const userSchema = new mongoose.Schema(
             min: 6,
             max: 30,
             trim: true,
-            select: false
+            select: false,
+        },
+        reject_message: {
+            type: String,
+            trim: true,
+            min: 3,
         },
         device_token: {
             type: String,
         },
-        id_card_front:{
+        id_card_front: {
             type: String,
-            required: true
+            required: true,
         },
-        id_card_back:{
+        id_card_back: {
             type: String,
-            required: true
+            required: true,
         },
     },
     { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);
-module.exports = {User};
+module.exports = { User };

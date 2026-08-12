@@ -20,6 +20,7 @@ const user_schema = {
     phone: joi.string().label("Phone"),
     username: joi.string().min(3).max(30).trim().label("Username"),
     password: joi.string().min(6).max(30).label("Password"),
+    reject_message: joi.string().min(3).label("Reject Message"),
     device_token: joi.string().label("Device Token"),
 };
 
@@ -87,6 +88,7 @@ function update_user_validation(obj) {
             phone: user_schema.phone.optional(),
             username: user_schema.username.optional(),
             password: user_schema.password.optional(),
+            reject_message: user_schema.reject_message.optional(),
             device_token: user_schema.device_token.optional(),
         })
         .messages(messages.messages_en);
@@ -98,6 +100,7 @@ function change_user_status_validation(obj) {
     const schema = joi
         .object({
             status: user_schema.status.required(),
+            reject_message: user_schema.reject_message.optional(),
         })
         .messages(messages.messages_en);
 

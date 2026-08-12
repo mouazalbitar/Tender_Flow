@@ -58,11 +58,11 @@ router.post(
         const frontPath = req.files.front[0].path;
         const backPath = req.files.back[0].path;
 
-        const commercialRegisterPath = req.files.commercial_register[0].path;
+        const logo_path = req.files.commercial_register[0].path;
 
-        const licensePath = req.files.license[0].path;
+        const commercial_register_path = req.files.license[0].path;
 
-        const logoPath = req.files.logo ? req.files.logo[0].path : null;
+        const license_path = req.files.logo ? req.files.logo[0].path : null;
 
         const existingUser = await User.findOne({
             username: req.body.user.username,
@@ -75,6 +75,9 @@ router.post(
         const organization = new Organization({
             ...req.body.organization,
             _type: "EXECUTOR",
+            logo: logo_path,
+            commercial_register: commercial_register_path,
+            license: license_path,
         });
 
         const savedOrganization = await organization.save();
