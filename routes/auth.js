@@ -13,7 +13,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
-const upload = require("../middlewares/upload");
+const uploadRegistration = require("../middlewares/upload_registration");
 
 /**
  * @description register a new mobile user & his organization
@@ -24,9 +24,12 @@ const upload = require("../middlewares/upload");
 router.post(
     "/mob/register",
 
-    upload.fields([
+    uploadRegistration.fields([
         { name: "front", maxCount: 1 },
         { name: "back", maxCount: 1 },
+        { name: "logo", maxCount: 1 },
+        { name: "commercial_register", maxCount: 1 },
+        { name: "license", maxCount: 1 },
     ]),
 
     asyncHandler(async (req, res) => {
@@ -46,9 +49,20 @@ router.post(
         if (!req.files?.front || !req.files?.back) {
             throw new Error("Both front and back ID card images are required.");
         }
+        if (!req.files?.commercial_register || !req.files?.license) {
+            throw new Error(
+                "Commercial register and license images are required.",
+            );
+        }
 
         const frontPath = req.files.front[0].path;
         const backPath = req.files.back[0].path;
+
+        const commercialRegisterPath = req.files.commercial_register[0].path;
+
+        const licensePath = req.files.license[0].path;
+
+        const logoPath = req.files.logo ? req.files.logo[0].path : null;
 
         const existingUser = await User.findOne({
             username: req.body.user.username,

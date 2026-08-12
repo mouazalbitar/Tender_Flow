@@ -15,6 +15,8 @@ const org_schema = {
     phone_number: joi.string().label("Phone Number"),
     email: joi.string().email().label("Email"),
     logo: joi.string().label("Logo"),
+    commercial_register: joi.string().label("Commercial Register"),
+    license: joi.string().label("License")
 };
 
 function create_org_validation(obj) {
@@ -24,7 +26,6 @@ function create_org_validation(obj) {
             _address: org_schema._address.required(),
             phone_number: org_schema.phone_number.required(),
             email: org_schema.email.required(),
-            logo: org_schema.logo.optional(),
         })
         .messages(messages.messages_en);
 
@@ -38,7 +39,6 @@ function update_org_validation(obj) {
             _address: org_schema._address.optional(),
             phone_number: org_schema.phone_number.optional(),
             email: org_schema.email.optional(),
-            logo: org_schema.logo.optional(),
         })
         .messages(messages.messages_en);
     return schema.validate(obj);

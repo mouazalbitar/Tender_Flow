@@ -31,10 +31,21 @@ const OrganizationSchema = new mongoose.Schema(
         },
         logo: {
             type: String,
+            required: false,
+        },
+
+        commercial_register: {
+            type: String,
+            required: true,
+        },
+
+        license: {
+            type: String,
+            required: true,
         },
     },
     { timestamps: true },
 );
 
 const Organization = mongoose.model("Organization", OrganizationSchema);
-module.exports = {Organization};
+module.exports = { Organization };
