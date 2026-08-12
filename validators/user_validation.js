@@ -52,7 +52,7 @@ function create_mobile_user_validation(obj) {
             l_name: user_schema.l_name.optional(),
             father_name: user_schema.father_name.optional(),
             national_num: user_schema.national_num.required(),
-            email: user_schema.email.optional(),
+            email: user_schema.email.required(),
             phone: user_schema.phone.optional(),
             username: user_schema.username.required(),
             password: user_schema.password.required(),

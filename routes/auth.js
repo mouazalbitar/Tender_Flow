@@ -13,59 +13,81 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
+const upload = require("../middlewares/upload");
 
 /**
- * @description register a new mobile user & his organiztion
+ * @description register a new mobile user & his organization
  * @route /api/auth/mob/register
  * @method POST
  * @access public
  */
 router.post(
     "/mob/register",
+
+    upload.fields([
+        { name: "front", maxCount: 1 },
+        { name: "back", maxCount: 1 },
+    ]),
+
     asyncHandler(async (req, res) => {
+        req.body.organization = JSON.parse(req.body.organization);
+        req.body.user = JSON.parse(req.body.user);
+
         const { error: error1 } = create_org_validation(req.body.organization);
+
         const { error: error2 } = create_mobile_user_validation(req.body.user);
+
         if (error1 || error2) {
-            return res.status(400).json({
-                message: `Validation Error: ${
-                    error1
-                        ? error1.details[0].message
-                        : error2.details[0].message
-                }`,
-                data: null,
-                status: 400,
-            });
+            throw new Error(
+                error1 ? error1.details[0].message : error2.details[0].message,
+            );
         }
 
-        let user = await User.findOne({ username: req.body.user.username });
+        if (!req.files?.front || !req.files?.back) {
+            throw new Error("Both front and back ID card images are required.");
+        }
 
-        if (user) {
-            return res.status(400).json({
-                message: "User already exists.",
-                data: null,
-                status: 400,
-            });
+        const frontPath = req.files.front[0].path;
+        const backPath = req.files.back[0].path;
+
+        const existingUser = await User.findOne({
+            username: req.body.user.username,
+        });
+
+        if (existingUser) {
+            throw new Error("User already exists.");
         }
 
         const organization = new Organization({
             ...req.body.organization,
             _type: "EXECUTOR",
         });
+
         const savedOrganization = await organization.save();
 
         const hashedPassword = await bcrypt.hash(req.body.user.password, 10);
 
-        user = new User({
+        const user = new User({
+            ...req.body.user,
             org_id: savedOrganization._id,
             password: hashedPassword,
             type: "EXECUTOR",
-            ...req.body.user,
+            id_card_front: frontPath,
+            id_card_back: backPath,
         });
-        const result = await user.save();
+
+        let result;
+        try {
+            result = await user.save();
+        } catch (error) {
+            await Organization.findByIdAndDelete(savedOrganization._id);
+
+            throw error;
+        }
 
         const { password, ...user_data } = result._doc;
 
-        res.status(201).json({
+        return res.status(201).json({
             message: "The Operation was Successful.",
             data: user_data,
             status: 201,

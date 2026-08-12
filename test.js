@@ -1,0 +1,1 @@
+console.log(new Date().toISOString().replace(/:/g, "-") + "-" + Math.round(Math.random() * 1e9));

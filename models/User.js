@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -66,6 +67,14 @@ const userSchema = new mongoose.Schema(
         },
         device_token: {
             type: String,
+        },
+        id_card_front:{
+            type: String,
+            required: true
+        },
+        id_card_back:{
+            type: String,
+            required: true
         },
     },
     { timestamps: true },

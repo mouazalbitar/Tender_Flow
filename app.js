@@ -19,7 +19,6 @@ app.use(logger);
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/orgs", require("./routes/orgs"));
-app.use("/api/upload", require("./routes/upload"));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./welcome_page/welcome.html"));
