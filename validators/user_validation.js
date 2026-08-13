@@ -96,11 +96,10 @@ function update_user_validation(obj) {
     return schema.validate(obj);
 }
 
-function change_user_status_validation(obj) {
+function reject_user_validation(obj) {
     const schema = joi
         .object({
-            status: user_schema.status.required(),
-            reject_message: user_schema.reject_message.optional(),
+            reject_message: user_schema.reject_message.required(),
         })
         .messages(messages.messages_en);
 
@@ -112,5 +111,5 @@ module.exports = {
     create_mobile_user_validation,
     login_validation,
     update_user_validation,
-    change_user_status_validation,
+    reject_user_validation,
 };

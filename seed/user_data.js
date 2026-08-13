@@ -13,6 +13,8 @@ const users = [
         phone: "0999999999",
         username: "admin1",
         password: bcrypt.hashSync("admin1", salt),
+        id_card_front: "test",
+        id_card_back: "test",
     },
     {
         type: "EXECUTOR",
@@ -24,6 +26,8 @@ const users = [
         phone: "0999999999",
         username: "admin2",
         password: bcrypt.hashSync("admin2", salt),
+        id_card_front: "test",
+        id_card_back: "test",
     },
 ];
 

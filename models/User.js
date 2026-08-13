@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-            enum: ["PUBLISHER", "EXECUTOR", "SYSTEM_EMPLOYEE"],
+            enum: ["PUBLISHER", "EXECUTOR", "SYSTEM_EMPLOYEE", "ADMIN"],
             required: true,
         },
         f_name: {

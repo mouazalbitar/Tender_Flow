@@ -7,7 +7,7 @@ const { User } = require("../models/User");
 const {
     create_user_validation,
     update_user_validation,
-    change_user_status_validation,
+    reject_user_validation,
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
 
@@ -179,7 +179,7 @@ router.put(
             { status: "ACTIVE" },
             { new: true },
         );
-         if (req.user.id === req.params.id)
+        if (req.user.id === req.params.id)
             return res.status(403).json({
                 message: "You cannot do it for yourself.",
                 data: null,
@@ -218,17 +218,30 @@ router.put(
     verify_token,
     authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            { status: "REJECTED" },
-            { new: true },
-        );
+        const { error } = reject_user_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
         if (req.user.id === req.params.id)
             return res.status(403).json({
                 message: "You cannot do it for yourself.",
                 data: null,
                 status: 403,
             });
+
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                status: "REJECTED",
+                reject_message: req.body.reject_message,
+            },
+            { new: true },
+        );
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
@@ -260,7 +273,7 @@ router.put(
             { status: "PENDING" },
             { new: true },
         );
-         if (req.user.id === req.params.id)
+        if (req.user.id === req.params.id)
             return res.status(403).json({
                 message: "You cannot do it for yourself.",
                 data: null,
@@ -297,7 +310,7 @@ router.put(
             { status: "BANNED" },
             { new: true },
         );
-         if (req.user.id === req.params.id)
+        if (req.user.id === req.params.id)
             return res.status(403).json({
                 message: "You cannot do it for yourself.",
                 data: null,
