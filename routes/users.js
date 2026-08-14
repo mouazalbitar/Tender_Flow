@@ -11,6 +11,7 @@ const {
     bann_user_validation,
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
+const upload_id_cards = require("../middlewares/upload_id_cards");
 
 /**
  * @description get all users
@@ -89,7 +90,11 @@ router.post(
         }
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
-        user = new User(req.body);
+        user = new User({
+            ...req.body,
+            id_card_front: "null",
+            id_card_back: "null",
+        });
         const result = await user.save();
         const { password, ...user_data } = result._doc;
         res.status(201).json({
@@ -109,6 +114,10 @@ router.post(
 router.put(
     "/:id",
     verify_token,
+    upload_id_cards.fields([
+        { name: "front", maxCount: 1 },
+        { name: "back", maxCount: 1 },
+    ]),
     asyncHandler(async (req, res) => {
         const { error } = update_user_validation(req.body);
         if (error) {
@@ -118,9 +127,20 @@ router.put(
                 status: 400,
             });
         }
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+
+        const updateData = { ...req.body };
+
+        if (req.files?.front) {
+            updateData.id_card_front = req.files.front[0].path;
+        }
+        if (req.files?.back) {
+            updateData.id_card_back = req.files.back[0].path;
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, updateData, {
             new: true,
         });
+
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
@@ -258,7 +278,7 @@ router.put(
 );
 
 /**
- * @description change user status by id to PENDING, this fro mobile user
+ * @description change user status by id to PENDING, this for mobile user
  * @route /api/users/resend/:id
  * @method PUT
  * @access private
@@ -266,11 +286,10 @@ router.put(
 router.put(
     "/resend/:id",
     verify_token,
-    authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
         const user = await User.findByIdAndUpdate(
             req.params.id,
-            { status: "PENDING" },
+            { status: "PENDING", bann_message: null, reject_message: null },
             { new: true },
         );
         if (req.user.id === req.params.id)
