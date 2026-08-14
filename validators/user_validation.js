@@ -122,5 +122,5 @@ module.exports = {
     login_validation,
     update_user_validation,
     reject_user_validation,
-    bann_user_validation
+    bann_user_validation,
 };
