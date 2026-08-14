@@ -11,16 +11,39 @@ const {
 const uploadOrganization = require("../middlewares/upload_organization");
 
 /**
- * @description get all organizations
- * @route /api/orgs
+ * @description get all publishers organizations
+ * @route /api/orgs/publishers
  * @method GET
  * @access private
  */
 router.get(
-    "/",
+    "/publishers",
     verify_token,
     asyncHandler(async (req, res) => {
-        const orgs = await Organization.find();
+        const orgs = await Organization.find({
+            _type: "PUBLISHER",
+        });
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: orgs,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description get all executors organizations
+ * @route /api/orgs/executors
+ * @method GET
+ * @access private
+ */
+router.get(
+    "/executors",
+    verify_token,
+    asyncHandler(async (req, res) => {
+        const orgs = await Organization.find({
+            _type: "EXECUTOR",
+        });
         res.status(200).json({
             message: "The Operation was Successful.",
             data: orgs,
