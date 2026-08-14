@@ -70,6 +70,11 @@ const userSchema = new mongoose.Schema(
             trim: true,
             min: 3,
         },
+        bann_message: {
+            type: String,
+            trim: true,
+            min: 3,
+        },
         device_token: {
             type: String,
         },

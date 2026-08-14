@@ -8,6 +8,7 @@ const {
     create_user_validation,
     update_user_validation,
     reject_user_validation,
+    bann_user_validation,
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
 
@@ -127,10 +128,9 @@ router.put(
                 status: 404,
             });
         }
-        const { password, ...user_data } = user._doc;
         res.status(200).json({
             message: "The Operation was Successful.",
-            data: user_data,
+            data: user,
             status: 200,
         });
     }),
@@ -305,9 +305,10 @@ router.put(
     verify_token,
     authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
+        const { error } = bann_user_validation(req.body);
         const user = await User.findByIdAndUpdate(
             req.params.id,
-            { status: "BANNED" },
+            { status: "BANNED", bann_message: req.body.bann_message },
             { new: true },
         );
         if (req.user.id === req.params.id)

@@ -8,6 +8,7 @@ const {
     create_org_validation,
     update_org_validation,
 } = require("../validators/org_validation");
+const uploadOrganization = require("../middlewares/upload_organization");
 
 /**
  * @description get all organizations
@@ -55,53 +56,49 @@ router.get(
 );
 
 /**
- * @description create a new organization for executor
- * @route /api/orgs/executor
- * @method POST
- * @access public
- */
-router.post(
-    "/executor",
-    asyncHandler(async (req, res) => {
-        const { error } = create_org_validation(req.body);
-        if (error) {
-            const messages = error.details.map((err) => err.message);
-            return res.status(400).json({
-                message: `Validation Failed, ${error.details[0].message}`,
-                data: null,
-                status: 400,
-            });
-        }
-        const org = new Organization(req.body);
-        const result = await org.save();
-        res.status(201).json({
-            message: "Organization Created successfully.",
-            data: result,
-            status: 201,
-        });
-    }),
-);
-
-/**
  * @description create a new organization for publisher
- * @route /api/orgs/publish
+ * @route /api/orgs/publisher
  * @method POST
  * @access private
  */
 router.post(
-    "/publish",
+    "/publisher",
     verify_token,
+    uploadOrganization.fields([
+        { name: "logo", maxCount: 1 },
+        { name: "commercial_register", maxCount: 1 },
+        { name: "license", maxCount: 1 },
+    ]),
+    authorizeRoles("ADMIN"),
     asyncHandler(async (req, res) => {
         const { error } = create_org_validation(req.body);
         if (error) {
-            const messages = error.details.map((err) => err.message);
             return res.status(400).json({
                 message: `Validation Failed, ${error.details[0].message}`,
                 data: null,
                 status: 400,
             });
         }
-        const org = new Organization(req.body);
+
+        if (!req.files?.commercial_register || !req.files?.license) {
+            return res.status(400).json({
+                message: "Commercial register and license are required.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const logo_path = req.files.logo ? req.files.logo[0].path : null;
+        const commercial_register_path = req.files.commercial_register[0].path;
+        const license_path = req.files.license[0].path;
+
+        const org = new Organization({
+            ...req.body,
+            _type: "PUBLISHER",
+            logo: logo_path,
+            commercial_register: commercial_register_path,
+            license: license_path,
+        });
         const result = await org.save();
         res.status(201).json({
             message: "Organization Created successfully.",

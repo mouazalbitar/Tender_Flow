@@ -21,13 +21,14 @@ const user_schema = {
     username: joi.string().min(3).max(30).trim().label("Username"),
     password: joi.string().min(6).max(30).label("Password"),
     reject_message: joi.string().min(3).label("Reject Message"),
+    bann_message: joi.string().min(3).label("Ban Message"),
     device_token: joi.string().label("Device Token"),
 };
 
 function create_user_validation(obj) {
     const schema = joi
         .object({
-            org_id: user_schema.org_id.optional(),
+            org_id: user_schema.org_id.required(),
             role_id: user_schema.role_id.optional(),
             type: user_schema.type.required(),
             f_name: user_schema.f_name.required(),
@@ -87,8 +88,8 @@ function update_user_validation(obj) {
             email: user_schema.email.optional(),
             phone: user_schema.phone.optional(),
             username: user_schema.username.optional(),
-            password: user_schema.password.optional(),
             reject_message: user_schema.reject_message.optional(),
+            bann_message: user_schema.bann_message.optional(),
             device_token: user_schema.device_token.optional(),
         })
         .messages(messages.messages_en);
@@ -106,10 +107,21 @@ function reject_user_validation(obj) {
     return schema.validate(obj);
 }
 
+function bann_user_validation(obj) {
+    const schema = joi
+        .object({
+            bann_message: user_schema.bann_message.required(),
+        })
+        .messages(messages.messages_en);
+
+    return schema.validate(obj);
+}
+
 module.exports = {
     create_user_validation,
     create_mobile_user_validation,
     login_validation,
     update_user_validation,
     reject_user_validation,
+    bann_user_validation
 };

@@ -23,7 +23,6 @@ const uploadRegistration = require("../middlewares/upload_registration");
  */
 router.post(
     "/mob/register",
-
     uploadRegistration.fields([
         { name: "front", maxCount: 1 },
         { name: "back", maxCount: 1 },
@@ -31,7 +30,6 @@ router.post(
         { name: "commercial_register", maxCount: 1 },
         { name: "license", maxCount: 1 },
     ]),
-
     asyncHandler(async (req, res) => {
         req.body.organization = JSON.parse(req.body.organization);
         req.body.user = JSON.parse(req.body.user);
@@ -59,9 +57,7 @@ router.post(
         const backPath = req.files.back[0].path;
 
         const logo_path = req.files.commercial_register[0].path;
-
         const commercial_register_path = req.files.license[0].path;
-
         const license_path = req.files.logo ? req.files.logo[0].path : null;
 
         const existingUser = await User.findOne({
