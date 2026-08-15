@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
 const { Organization } = require("../models/Organization");
+const { User } = require("../models/User");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
 const {
@@ -165,6 +167,34 @@ router.put(
         res.status(200).json({
             message: "Organization updated successfully.",
             data: org,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description get all accounts in one org
+ * @route /api/orgs/:id/users
+ * @method GET
+ * @access private
+ */
+router.get(
+    "/:org_id/users",
+    verify_token,
+    asyncHandler(async (req, res) => {
+        if (!mongoose.Types.ObjectId.isValid(req.params.org_id)) {
+            return res.status(400).json({
+                message: "Invalid organization ID.",
+                data: null,
+                status: 400,
+            });
+        }
+        const users = await User.find({
+            org_id: req.params.org_id,
+        }).select("-password");
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: users,
             status: 200,
         });
     }),
