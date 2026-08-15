@@ -6,6 +6,7 @@ const salt = bcrypt.genSaltSync(10);
 const users = [
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a01"),
+        org_id: "66b000000000000000000001",
         type: "ADMIN",
         f_name: "admin",
         l_name: "admin",
@@ -20,6 +21,7 @@ const users = [
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a02"),
+        status: "Active",
         type: "EXECUTOR",
         f_name: "admin",
         l_name: "admin",
