@@ -3,10 +3,10 @@ function logger(req, res, next) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, ngrok-skip-browser-warning"
+        "Content-Type, Authorization, ngrok-skip-browser-warning",
     );
-    console.log(`${req.protocol}://${req.get("Host")}, ${req.method} ${req.originalUrl}`);
+    console.log(`${new Date().toISOString()}, ${req.method} ${req.originalUrl}`);
     next();
-};
+}
 
 module.exports = logger;
