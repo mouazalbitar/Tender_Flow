@@ -1,9 +1,11 @@
+const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const salt = bcrypt.genSaltSync(10);
 
 const users = [
     {
+        _id: new mongoose.Types.ObjectId("66b000000000000000000a01"),
         type: "ADMIN",
         f_name: "admin",
         l_name: "admin",
@@ -17,6 +19,7 @@ const users = [
         id_card_back: "test",
     },
     {
+        _id: new mongoose.Types.ObjectId("66b000000000000000000a02"),
         type: "EXECUTOR",
         f_name: "admin",
         l_name: "admin",
@@ -30,6 +33,7 @@ const users = [
         id_card_back: "test",
     },
     {
+        _id: new mongoose.Types.ObjectId("66b000000000000000000a03"),
         status: "REJECTED",
         type: "EXECUTOR",
         f_name: "admin",
@@ -45,6 +49,7 @@ const users = [
         id_card_back: "test",
     },
     {
+        _id: new mongoose.Types.ObjectId("66b000000000000000000a04"),
         status: "BANNED",
         type: "EXECUTOR",
         f_name: "admin",
@@ -56,6 +61,22 @@ const users = [
         username: "admin4",
         password: bcrypt.hashSync("admin4", salt),
         bann_message: "banned banned banned",
+        id_card_front: "test",
+        id_card_back: "test",
+    },
+    {
+        _id: new mongoose.Types.ObjectId("66b000000000000000000a05"),
+        org_id: "66b000000000000000000002",
+        status: "ACTIVE",
+        type: "PUBLISHER",
+        f_name: "admin",
+        l_name: "admin",
+        father_name: "admin",
+        national_num: "500000000",
+        email: "admin5@admin.com",
+        phone: "0999999999",
+        username: "admin5",
+        password: bcrypt.hashSync("admin5", salt),
         id_card_front: "test",
         id_card_back: "test",
     },

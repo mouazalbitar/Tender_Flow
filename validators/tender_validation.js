@@ -45,3 +45,5 @@ function create_tender_validation(obj) {
 
     return schema.validate(obj);
 }
+
+module.exports = { create_tender_validation };
