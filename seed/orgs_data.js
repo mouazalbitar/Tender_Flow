@@ -65,6 +65,7 @@ const orgs = [
         _id: new mongoose.Types.ObjectId("66b000000000000000000007"),
         org_name: "Modern Building Contractors",
         _address: "Hama",
+        _type: "EXECUTOR",
         phone_number: "099999995",
         email: "info@modernbuilding.com",
         commercial_register_num: "CR-10007",
