@@ -8,10 +8,6 @@ const org_schema = {
         .string()
         .valid("PUBLISHER", "EXECUTOR", "SYSTEM")
         .label("Organization Type"),
-    _status: joi
-        .string()
-        .valid("PENDING", "ACTIVE", "REJECTED", "BANNED")
-        .label("Status"),
     phone_number: joi.string().label("Phone Number"),
     email: joi.string().email().label("Email"),
     commercial_register_num: joi

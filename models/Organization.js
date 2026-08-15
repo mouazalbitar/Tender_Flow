@@ -15,11 +15,6 @@ const OrganizationSchema = new mongoose.Schema(
             enum: ["PUBLISHER", "EXECUTOR", "SYSTEM"],
             required: true,
         },
-        _status: {
-            type: String,
-            enum: ["PENDING", "ACTIVE", "REJECTED", "BANNED"],
-            default: "PENDING",
-        },
         phone_number: {
             type: String,
             required: true,
