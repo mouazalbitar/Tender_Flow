@@ -3,7 +3,7 @@ const app = express();
 const { connectToDB } = require("./config/db");
 const { not_found, error_handler } = require("./middlewares/errors");
 const logger = require("./middlewares/logger");
-const path = require("path"); // for welcome page
+const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env" });
 
@@ -13,6 +13,7 @@ connectToDB();
 // apply middlewares
 app.use(express.json());
 app.use(logger);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // routes
 app.use("/api/auth", require("./routes/auth"));
