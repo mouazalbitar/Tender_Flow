@@ -92,7 +92,7 @@ router.post(
         req.body.password = await bcrypt.hash(req.body.password, salt);
         user = new User({
             ...req.body,
-            _type: "PUBLISHER",
+            type: "PUBLISHER",
             status: "ACTIVE",
             id_card_front: "null",
             id_card_back: "null",
