@@ -21,7 +21,7 @@ const users = [
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a02"),
-        status: "Active",
+        status: "ACTIVE",
         type: "EXECUTOR",
         f_name: "admin",
         l_name: "admin",
