@@ -138,7 +138,7 @@ const users = [
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a09"),
         org_id: "66b000000000000000000009",
-        status: "ACTIVE",
+        status: "PENDING",
         type: "EXECUTOR",
         f_name: "Liam",
         l_name: "Moore",
@@ -154,7 +154,7 @@ const users = [
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a10"),
         org_id: "66b000000000000000000010",
-        status: "REJECTED",
+        status: "PENDING",
         type: "EXECUTOR",
         f_name: "Noah",
         l_name: "Clark",
