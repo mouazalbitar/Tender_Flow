@@ -2,48 +2,78 @@ const joi = require("joi");
 const messages = require("./messages");
 
 const tender_schema = {
+    tender_number: joi.string().min(3).max(50).label("Tender Number"),
+    title: joi.string().min(3).max(200).label("Tender Title"),
+    description: joi.string().min(10).label("Tender Description"),
     publisher_org_id: joi.string().label("Publisher Organization ID"),
-    title: joi.string().min(3).max(200).trim().label("Tender Title"),
-    description: joi
+    type: joi
         .string()
-        .min(10)
-        .max(5000)
-        .trim()
-        .label("Tender Description"),
-    reference_number: joi
-        .string()
-        .min(3)
-        .max(50)
-        .trim()
-        .label("Reference Number"),
+        .valid("PUBLIC", "LIMITED", "DIRECT")
+        .label("Tender Type"),
     status: joi
         .string()
-        .valid("DRAFT", "PUBLISHED", "CLOSED", "AWARDED", "CANCELLED")
-        .label("Status"),
-    publication_date: joi.date().label("Publication Date"),
-    submission_deadline: joi.date().label("Submission Deadline"),
-    opening_date: joi.date().label("Opening Date"),
-    estimated_budget: joi.number().positive().label("Estimated Budget"),
-    currency: joi.string().min(3).max(10).trim().label("Currency"),
-    location: joi.string().max(200).trim().label("Location"),
+        .valid(
+            "DRAFT",
+            "PUBLISHED",
+            "OPEN",
+            "CLOSED",
+            "REPUBLISHED",
+            "AWARDED",
+            "CANCELLED",
+        )
+        .label("Tender Status"),
+    published_at: joi.date().label("Published At"),
+    submission_start: joi.date().label("Submission Start"),
+    submission_deadline: joi
+        .date()
+        .greater(joi.ref("submission_start"))
+        .label("Submission Deadline"),
+    estimated_value: joi.number().min(0).label("Estimated Value"),
+    currency: joi.string().label("Currency"),
+    execution_location: joi
+        .string()
+        .min(3)
+        .max(200)
+        .label("Execution Location"),
 };
 
 function create_tender_validation(obj) {
     const schema = joi
         .object({
+            tender_number: tender_schema.tender_number.required(),
             title: tender_schema.title.required(),
             description: tender_schema.description.required(),
-            reference_number: tender_schema.reference_number.required(),
-            publication_date: tender_schema.publication_date.required(),
+            publisher_org_id: tender_schema.publisher_org_id.required(),
+            type: tender_schema.type.required(),
+            submission_start: tender_schema.submission_start.required(),
             submission_deadline: tender_schema.submission_deadline.required(),
-            opening_date: tender_schema.opening_date.required(),
-            estimated_budget: tender_schema.estimated_budget.required(),
-            currency: tender_schema.currency.required(),
-            location: tender_schema.location.optional(),
+            estimated_value: tender_schema.estimated_value.optional(),
+            currency: tender_schema.currency.optional(),
+            execution_location: tender_schema.execution_location.required(),
         })
         .messages(messages.messages_en);
 
     return schema.validate(obj);
 }
 
-module.exports = { create_tender_validation };
+function update_tender_validation(obj) {
+    const schema = joi
+        .object({
+            title: tender_schema.title.optional(),
+            description: tender_schema.description.optional(),
+            type: tender_schema.type.optional(),
+            submission_start: tender_schema.submission_start.optional(),
+            submission_deadline: tender_schema.submission_deadline.optional(),
+            estimated_value: tender_schema.estimated_value.optional(),
+            currency: tender_schema.currency.optional(),
+            execution_location: tender_schema.execution_location.optional(),
+        })
+        .messages(messages.messages_en);
+
+    return schema.validate(obj);
+}
+
+module.exports = {
+    create_tender_validation,
+    update_tender_validation,
+};

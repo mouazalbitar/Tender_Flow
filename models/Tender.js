@@ -1,62 +1,94 @@
-const { valid } = require("joi");
 const mongoose = require("mongoose");
 
 const tenderSchema = new mongoose.Schema(
     {
-        publisher_org_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Organization",
-            required: true,
-        },
-        title: {
-            type: String,
-            required: true,
-            trim: true,
-        },
-        description: {
-            type: String,
-            required: true,
-            trim: true,
-        },
-        reference_number: {
+        tender_number: {
             type: String,
             required: true,
             unique: true,
             trim: true,
         },
+
+        title: {
+            type: String,
+            required: true,
+            trim: true,
+            minlength: 3,
+            maxlength: 200,
+        },
+
+        description: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+
+        publisher_org_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Organization",
+            required: true,
+        },
+
+        type: {
+            type: String,
+            required: true,
+            enum: [
+                "PUBLIC",
+                "LIMITED",
+                "DIRECT",
+            ],
+        },
+
         status: {
             type: String,
-            enum: ["DRAFT", "PUBLISHED", "CLOSED", "AWARDED", "CANCELLED", "RENEWED"],
+            enum: [
+                "DRAFT",
+                "PUBLISHED",
+                "OPEN",
+                "CLOSED",
+                "REPUBLISHED",
+                "AWARDED",
+                "CANCELLED",
+            ],
             default: "DRAFT",
         },
-        publication_date: {
+
+        published_at: {
+            type: Date,
+        },
+
+        submission_start: {
             type: Date,
             required: true,
         },
+
         submission_deadline: {
             type: Date,
             required: true,
         },
-        opening_date: {
-            type: Date,
-            required: true,
-        },
-        estimated_budget: {
+
+        estimated_value: {
             type: Number,
-            required: true,
+            min: 0,
         },
+
         currency: {
-            type: String,
-            enum: ["USD", "SYP", "EUR"],
-            required: true,
-        },
-        location: {
             type: String,
             trim: true,
         },
+
+        execution_location: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 200,
+        },
     },
-    { timestamps: true },
+    {
+        timestamps: true,
+    }
 );
 
 const Tender = mongoose.model("Tender", tenderSchema);
-module.exports = { Tender };
+
+module.exports = Tender;
