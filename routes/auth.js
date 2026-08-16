@@ -210,9 +210,10 @@ router.post(
             { expiresIn: "8h" },
         );
         const { password, ...user_data } = user._doc;
+        const org = await Organization.findById(user.org_id);
         res.status(200).json({
             message: "The Operation was Successful.",
-            data: user_data,
+            data: { user: user_data, Organization: org },
             status: 200,
             token: token,
         });
