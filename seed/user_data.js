@@ -18,8 +18,8 @@ const users = [
         phone: "0999999999",
         username: "admin1",
         password: bcrypt.hashSync("admin1", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(1)",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(1)",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(1).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(1).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a02"),
