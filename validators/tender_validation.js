@@ -2,10 +2,8 @@ const joi = require("joi");
 const messages = require("./messages");
 
 const tender_schema = {
-    tender_number: joi.string().min(3).max(50).label("Tender Number"),
     title: joi.string().min(3).max(200).label("Tender Title"),
     description: joi.string().min(10).label("Tender Description"),
-    publisher_org_id: joi.string().label("Publisher Organization ID"),
     type: joi
         .string()
         .valid("PUBLIC", "LIMITED", "DIRECT")
@@ -29,7 +27,7 @@ const tender_schema = {
         .greater(joi.ref("submission_start"))
         .label("Submission Deadline"),
     estimated_value: joi.number().min(0).label("Estimated Value"),
-    currency: joi.string().label("Currency"),
+    currency: joi.string().valid("SYP", "USD", "EUR").label("Currency"),
     execution_location: joi
         .string()
         .min(3)
@@ -40,10 +38,8 @@ const tender_schema = {
 function create_tender_validation(obj) {
     const schema = joi
         .object({
-            tender_number: tender_schema.tender_number.required(),
             title: tender_schema.title.required(),
             description: tender_schema.description.required(),
-            publisher_org_id: tender_schema.publisher_org_id.required(),
             type: tender_schema.type.required(),
             submission_start: tender_schema.submission_start.required(),
             submission_deadline: tender_schema.submission_deadline.required(),

@@ -7,16 +7,71 @@ const { Tender } = require("../models/Tender");
 const { create_tender_validation } = require("../validators/tender_validation");
 
 /**
+ * @description get all tenders in the system
+ * @route /api/tenders/all
+ * @method GET
+ * @access private - ADMIN
+ */
+router.get(
+    "/all",
+    verify_token,
+    authorizeRoles("ADMIN"),
+    asyncHandler(async (req, res) => {
+        const tenders = await Tender.find().populate("publisher_org_id").sort({
+            createdAt: -1,
+        });
+
+        res.status(200).json({
+            message: "All Tenders Retrieved Successfully.",
+            data: tenders,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description get tenders
+ * @route /api/tenders
+ * @method GET
+ * @access private - PUBLISHER / EXECUTOR
+ */
+router.get(
+    "/",
+    verify_token,
+    authorizeRoles("PUBLISHER", "EXECUTOR", "ADMIN"),
+    asyncHandler(async (req, res) => {
+        let tenders;
+        if (req.user.type === "PUBLISHER" || req.user.type === "ADMIN") {
+            tenders = await Tender.find({
+                publisher_org_id: req.user.org_id,
+            }).sort({ createdAt: -1 });
+        } else if (req.user.type === "EXECUTOR" || req.user.type === "ADMIN") {
+            tenders = await Tender.find({
+                status: {
+                    $in: ["PUBLISHED", "OPEN"],
+                },
+            }).sort({ createdAt: -1 });
+        }
+        res.status(200).json({
+            message: "The Operation was Successfully.",
+            data: tenders,
+            status: 200,
+        });
+    }),
+);
+
+/**
  * @description create a new tender
  * @route /api/tenders
  * @method POST
- * @access private
+ * @access private - PUBLISHER
  */
 router.post(
     "/",
     verify_token,
+    authorizeRoles("PUBLISHER", "ADMIN"),
     asyncHandler(async (req, res) => {
-        const { error } = create_tender_validation(req.body);
+        const { error, value } = create_tender_validation(req.body);
         if (error) {
             return res.status(400).json({
                 message: `Validation Error: ${error.details[0].message}`,
@@ -25,9 +80,39 @@ router.post(
             });
         }
 
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+        const organization = await Organization.findById(user.org_id);
+        if (!organization) {
+            return res.status(404).json({
+                message: "Organization Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+        if (organization.type !== "PUBLISHER") {
+            return res.status(403).json({
+                message: "Only publisher organizations can create tenders.",
+                data: null,
+                status: 403,
+            });
+        }
         const tender = new Tender({
-            ...req.body,
-            publisher_org_id: req.user.org_id,
+            ...value,
+            publisher_org_id: user.org_id,
             status: "DRAFT",
         });
         const result = await tender.save();
