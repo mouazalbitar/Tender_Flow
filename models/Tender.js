@@ -36,6 +36,23 @@ const TenderSchema = new mongoose.Schema(
             enum: ["PUBLIC", "LIMITED", "DIRECT"],
             required: true,
         },
+        category: {
+            type: String,
+            enum: [
+                "CONSTRUCTION", // إنشائية
+                "ENGINEERING", // هندسية
+                "IT", // تقنية معلومات
+                "SUPPLY", // توريد
+                "SERVICES", // خدمات
+                "MAINTENANCE", // صيانة
+                "CONSULTING", // استشارات
+                "ENERGY", // طاقة
+                "TRANSPORTATION", // نقل
+                "MEDICAL", // طبية
+                "OTHER", // أخرى
+            ],
+            required: true,
+        },
         published_at: {
             type: Date,
         },

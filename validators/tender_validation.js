@@ -8,6 +8,22 @@ const tender_schema = {
         .string()
         .valid("PUBLIC", "LIMITED", "DIRECT")
         .label("Tender Type"),
+    category: joi
+        .string()
+        .valid(
+            "CONSTRUCTION", // إنشائية
+            "ENGINEERING", // هندسية
+            "IT", // تقنية معلومات
+            "SUPPLY", // توريد
+            "SERVICES", // خدمات
+            "MAINTENANCE", // صيانة
+            "CONSULTING", // استشارات
+            "ENERGY", // طاقة
+            "TRANSPORTATION", // نقل
+            "MEDICAL", // طبية
+            "OTHER",
+        )
+        .label("Category"),
     status: joi
         .string()
         .valid(
@@ -41,6 +57,7 @@ function create_tender_validation(obj) {
             title: tender_schema.title.required(),
             description: tender_schema.description.required(),
             type: tender_schema.type.required(),
+            category: tender_schema.category.required(),
             submission_start: tender_schema.submission_start.required(),
             submission_deadline: tender_schema.submission_deadline.required(),
             estimated_value: tender_schema.estimated_value.optional(),
