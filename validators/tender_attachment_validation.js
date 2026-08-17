@@ -33,6 +33,19 @@ function create_tender_attachment_validation(obj) {
     return schema.validate(obj);
 }
 
+function update_tender_attachment_validation(obj) {
+    const schema = joi
+        .object({
+            type: tender_attachment_schema.type.optional(),
+            name: tender_attachment_schema.name.optional(),
+            description: tender_attachment_schema.description.optional(),
+        })
+        .messages(messages.messages_en);
+
+    return schema.validate(obj);
+}
+
 module.exports = {
     create_tender_attachment_validation,
+    update_tender_attachment_validation,
 };

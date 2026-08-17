@@ -10,10 +10,12 @@ const { TenderAttachment } = require("../models/TenderAttachment");
 const { create_tender_validation } = require("../validators/tender_validation");
 const {
     create_tender_attachment_validation,
+    update_tender_attachment_validation,
 } = require("../validators/tender_attachment_validation");
 const {
     upload_tender_attachment,
 } = require("../middlewares/upload_tender_attachment");
+const fs = require("fs");
 
 /**
  * @description get all tenders in the system for admin
@@ -222,7 +224,6 @@ router.post(
     verify_token,
     authorizeRoles("PUBLISHER"),
     upload_tender_attachment.single("file"),
-
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
 
@@ -235,8 +236,7 @@ router.post(
         }
 
         // validation
-        const { error, value } =
-            create_tender_attachment_validation(req.body);
+        const { error, value } = create_tender_attachment_validation(req.body);
         if (error) {
             return res.status(400).json({
                 message: `Validation Error: ${error.details[0].message}`,
@@ -273,10 +273,7 @@ router.post(
             });
         }
 
-        if (
-            tender.publisher_org_id.toString() !==
-            user.org_id.toString()
-        ) {
+        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
             return res.status(403).json({
                 message: "You are not authorized to modify this tender.",
                 data: null,
@@ -318,6 +315,221 @@ router.post(
             message: "Tender Attachment Added Successfully.",
             data: result,
             status: 201,
+        });
+    }),
+);
+
+/**
+ * @description Update tender attachment
+ * @route /api/tenders/:tender_id/attachments/:attachment_id
+ * @method PUT
+ * @access private - PUBLISHER
+ */
+router.put(
+    "/:tender_id/attachments/:attachment_id",
+    verify_token,
+    authorizeRoles("PUBLISHER"),
+    upload_tender_attachment.single("file"),
+    asyncHandler(async (req, res) => {
+        const { tender_id, attachment_id } = req.params;
+
+        const { error, value } = update_tender_attachment_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const tender = await Tender.findById(tender_id);
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (tender.status !== "DRAFT") {
+            return res.status(403).json({
+                message:
+                    "Tender attachments can only be modified while the tender is in DRAFT status.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to modify this tender.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        const attachment = await TenderAttachment.findOne({
+            _id: attachment_id,
+            tender_id: tender._id,
+        });
+
+        if (!attachment) {
+            return res.status(404).json({
+                message: "Tender Attachment Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        const fixedAttachmentTypes = [
+            "TECHNICAL_CONDITIONS",
+            "FINANCIAL_CONDITIONS",
+            "ADMINISTRATIVE_CONDITIONS",
+            "QUANTITY_SCHEDULE",
+        ];
+        if (
+            value.type &&
+            fixedAttachmentTypes.includes(value.type) &&
+            value.type !== attachment.type
+        ) {
+            const existingAttachment = await TenderAttachment.findOne({
+                tender_id: tender._id,
+                type: value.type,
+                _id: { $ne: attachment._id },
+            });
+
+            if (existingAttachment) {
+                return res.status(409).json({
+                    message: "This attachment type already exists.",
+                    data: null,
+                    status: 409,
+                });
+            }
+        }
+
+        if (value.type !== undefined) {
+            attachment.type = value.type;
+        }
+        if (value.name !== undefined) {
+            attachment.name = value.name;
+        }
+        if (value.description !== undefined) {
+            attachment.description = value.description;
+        }
+
+        if (req.file) {
+            const oldFilePath = attachment.file_path;
+            attachment.file_path = req.file.path;
+            if (oldFilePath && fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
+        }
+
+        const result = await attachment.save();
+        res.status(200).json({
+            message: "Tender Attachment Updated Successfully.",
+            data: result,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Delete tender attachment
+ * @route /api/tenders/:tender_id/attachments/:attachment_id
+ * @method DELETE
+ * @access private - PUBLISHER
+ */
+router.delete(
+    "/:tender_id/attachments/:attachment_id",
+    verify_token,
+    authorizeRoles("PUBLISHER"),
+    asyncHandler(async (req, res) => {
+        const { tender_id, attachment_id } = req.params;
+
+        const tender = await Tender.findById(tender_id);
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (tender.status !== "DRAFT") {
+            return res.status(403).json({
+                message:
+                    "Tender attachments can only be deleted while the tender is in DRAFT or CANCELLED status.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to modify this tender.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        const attachment = await TenderAttachment.findOne({
+            _id: attachment_id,
+            tender_id: tender._id,
+        });
+        if (!attachment) {
+            return res.status(404).json({
+                message: "Tender Attachment Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (attachment.file_path && fs.existsSync(attachment.file_path)) {
+            fs.unlinkSync(attachment.file_path);
+        }
+
+        await TenderAttachment.deleteOne({
+            _id: attachment._id,
+        });
+
+        res.status(200).json({
+            message: "Tender Attachment Deleted Successfully.",
+            data: null,
+            status: 200,
         });
     }),
 );
