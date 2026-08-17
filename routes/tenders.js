@@ -112,7 +112,7 @@ router.post(
                 status: 404,
             });
         }
-        if (organization.type !== "PUBLISHER") {
+        if (organization._type !== "PUBLISHER") {
             return res.status(403).json({
                 message: "Only publisher organizations can create tenders.",
                 data: null,
