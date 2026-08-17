@@ -4,6 +4,8 @@ const asyncHandler = require("express-async-handler");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
 const { Tender } = require("../models/Tender");
+const { User } = require("../models/User");
+const { Organization } = require("../models/Organization");
 const { create_tender_validation } = require("../validators/tender_validation");
 
 /**
