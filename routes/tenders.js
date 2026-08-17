@@ -38,17 +38,24 @@ router.get(
 router.get(
     "/",
     verify_token,
-    authorizeRoles("PUBLISHER", "EXECUTOR", "ADMIN"),
+    authorizeRoles("PUBLISHER", "EXECUTOR"),
     asyncHandler(async (req, res) => {
         let tenders;
-        if (req.user.type === "PUBLISHER" || req.user.type === "ADMIN") {
+        // =========================
+        // PUBLISHER
+        // =========================
+        if (req.user.type === "PUBLISHER") {
             tenders = await Tender.find({
                 publisher_org_id: req.user.org_id,
             }).sort({ createdAt: -1 });
-        } else if (req.user.type === "EXECUTOR" || req.user.type === "ADMIN") {
+        }
+        // =========================
+        // EXECUTOR
+        // =========================
+        else if (req.user.type === "EXECUTOR") {
             tenders = await Tender.find({
                 status: {
-                    $in: ["PUBLISHED", "OPEN"],
+                    $in: ["PUBLISHED", "OPEN", "REPUBLISHED"],
                 },
             }).sort({ createdAt: -1 });
         }
