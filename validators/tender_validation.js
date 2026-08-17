@@ -75,6 +75,7 @@ function update_tender_validation(obj) {
             title: tender_schema.title.optional(),
             description: tender_schema.description.optional(),
             type: tender_schema.type.optional(),
+            category: tender_schema.category.optional(),
             submission_start: tender_schema.submission_start.optional(),
             submission_deadline: tender_schema.submission_deadline.optional(),
             estimated_value: tender_schema.estimated_value.optional(),

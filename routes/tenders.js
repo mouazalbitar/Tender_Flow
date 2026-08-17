@@ -7,7 +7,10 @@ const { Tender } = require("../models/Tender");
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
 const { TenderAttachment } = require("../models/TenderAttachment");
-const { create_tender_validation } = require("../validators/tender_validation");
+const {
+    create_tender_validation,
+    update_tender_validation,
+} = require("../validators/tender_validation");
 const {
     create_tender_attachment_validation,
     update_tender_attachment_validation,
@@ -52,17 +55,11 @@ router.get(
     authorizeRoles("PUBLISHER", "EXECUTOR"),
     asyncHandler(async (req, res) => {
         let tenders;
-        // =========================
-        // PUBLISHER
-        // =========================
         if (req.user.type === "PUBLISHER") {
             tenders = await Tender.find({
                 publisher_org_id: req.user.org_id,
             }).sort({ createdAt: -1 });
         }
-        // =========================
-        // EXECUTOR
-        // =========================
         else if (req.user.type === "EXECUTOR") {
             tenders = await Tender.find({
                 status: {
@@ -73,68 +70,6 @@ router.get(
         res.status(200).json({
             message: "The Operation was Successfully.",
             data: tenders,
-            status: 200,
-        });
-    }),
-);
-
-/**
- * @description get tender details with requirements
- * @route /api/tenders/:tender_id
- * @method GET
- * @access private - PUBLISHER / EXECUTOR
- */
-router.get(
-    "/:tender_id",
-    verify_token,
-    authorizeRoles("PUBLISHER", "EXECUTOR", "ADMIN"),
-    asyncHandler(async (req, res) => {
-        const { tender_id } = req.params;
-
-        const tender =
-            await Tender.findById(tender_id).populate("publisher_org_id");
-
-        if (!tender) {
-            return res.status(404).json({
-                message: "Tender Not Found.",
-                data: null,
-                status: 404,
-            });
-        }
-
-        if (req.user.type === "PUBLISHER") {
-            if (
-                tender.publisher_org_id._id.toString() !==
-                req.user.org_id.toString()
-            ) {
-                return res.status(403).json({
-                    message: "You are not authorized to view this tender.",
-                    data: null,
-                    status: 403,
-                });
-            }
-        }
-
-        if (req.user.type === "EXECUTOR") {
-            if (!["PUBLISHED", "OPEN", "REPUBLISHED"].includes(tender.status)) {
-                return res.status(403).json({
-                    message: "This tender is not available.",
-                    data: null,
-                    status: 403,
-                });
-            }
-        }
-
-        const requirements = await TenderRequirements.findOne({
-            tender_id: tender._id,
-        });
-
-        res.status(200).json({
-            message: "Tender Retrieved Successfully.",
-            data: {
-                tender,
-                requirements,
-            },
             status: 200,
         });
     }),
@@ -209,6 +144,153 @@ router.post(
             message: "Tender Created Successfully.",
             data: result,
             status: 201,
+        });
+    }),
+);
+
+/**
+ * @description Update tender
+ * @route /api/tenders/:tender_id
+ * @method PUT
+ * @access private - PUBLISHER
+ */
+router.put(
+    "/:tender_id",
+    verify_token,
+    authorizeRoles("PUBLISHER"),
+    asyncHandler(async (req, res) => {
+        const { tender_id } = req.params;
+
+        const { error, value } = update_tender_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const tender = await Tender.findById(tender_id);
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (tender.status !== "DRAFT") {
+            return res.status(403).json({
+                message:
+                    "Tender can only be modified while it is in DRAFT status.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to modify this tender.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        Object.assign(tender, value);
+        const result = await tender.save();
+
+        res.status(200).json({
+            message: "Tender Updated Successfully.",
+            data: result,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Get tender attachments
+ * @route /api/tenders/:tender_id/attachments
+ * @method GET
+ * @access private - PUBLISHER / EXECUTOR / ADMIN
+ */
+router.get(
+    "/:tender_id/attachments",
+    verify_token,
+    authorizeRoles("PUBLISHER", "EXECUTOR", "ADMIN"),
+    asyncHandler(async (req, res) => {
+        const { tender_id } = req.params;
+
+        const tender = await Tender.findById(tender_id);
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        // PUBLISHER Can only view attachments of own tenders
+        if (req.user.type === "PUBLISHER") {
+            const user = await User.findById(req.user.id);
+            if (!user) {
+                return res.status(404).json({
+                    message: "User Not Found.",
+                    data: null,
+                    status: 404,
+                });
+            }
+            if (!user.org_id) {
+                return res.status(403).json({
+                    message: "User is not associated with an organization.",
+                    data: null,
+                    status: 403,
+                });
+            }
+            if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+                return res.status(403).json({
+                    message:
+                        "You are not authorized to view these attachments.",
+                    data: null,
+                    status: 403,
+                });
+            }
+        }
+
+        // EXECUTOR Can only view attachments of available tenders
+        if (req.user.type === "EXECUTOR") {
+            if (!["PUBLISHED", "OPEN", "REPUBLISHED"].includes(tender.status)) {
+                return res.status(403).json({
+                    message: "This tender is not available.",
+                    data: null,
+                    status: 403,
+                });
+            }
+        }
+
+        const attachments = await TenderAttachment.find({
+            tender_id: tender._id,
+        }).sort({ createdAt: 1 });
+        res.status(200).json({
+            message: "Tender Attachments Retrieved Successfully.",
+            data: attachments,
+            status: 200,
         });
     }),
 );
