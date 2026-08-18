@@ -22,13 +22,10 @@ const otp_request_schema = joi
 
 const otp_verify_schema = joi
     .object({
-        phone: joi
+        username: joi
             .string()
-            .pattern(/^\+9639\d{8}$/)
-            .length(13)
             .required()
-            .label("Phone"),
-
+            .label("Username"),
         otp: joi
             .string()
             .pattern(/^\d{6}$/)

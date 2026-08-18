@@ -47,7 +47,7 @@ const users = [
         father_name: "Robert",
         national_num: "200000000",
         email: "james@globalconstruction.com",
-        phone: "+963965050015",
+        phone: "+963952524141",
         username: "executor1",
         password: bcrypt.hashSync("executor1", salt),
         id_card_front: "/uploads/executor/id_cards/id_card_152kf874(3).jpg",

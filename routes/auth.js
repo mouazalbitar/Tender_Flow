@@ -7,6 +7,8 @@ const asyncHandler = require("express-async-handler");
 const {
     create_mobile_user_validation,
     login_validation,
+    password_reset_request_validation,
+    password_phone_validation,
 } = require("../validators/user_validation");
 const { create_org_validation } = require("../validators/org_validation");
 const bcrypt = require("bcryptjs");
@@ -235,6 +237,9 @@ router.post(
     }),
 );
 
+// ----------------------------------
+// اذا كان مسجل الدخول
+
 /**
  * @description Send OTP for phone verification
  * @route /api/auth/phone/send-otp
@@ -314,6 +319,117 @@ router.post(
 );
 
 /**
+ * @description Verify OTP for phone verification
+ * @route /api/auth/phone/verify-otp
+ * @method POST
+ * @access private - EXECUTOR
+ */
+router.post(
+    "/phone/verify-otp",
+    verify_token,
+    authorizeRoles("EXECUTOR"),
+    asyncHandler(async (req, res) => {
+        const { error, value } = verify_otp_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.phone) {
+            return res.status(400).json({
+                message: "Phone number is not registered.",
+                data: null,
+                status: 400,
+            });
+        }
+        if (user.phone_verified) {
+            return res.status(400).json({
+                message: "Phone number is already verified.",
+                data: null,
+                status: 400,
+            });
+        }
+        const otp_record = await OTP.findOne({
+            user_id: user._id,
+            purpose: "PHONE_VERIFICATION",
+        }).sort({
+            createdAt: -1,
+        });
+        if (!otp_record) {
+            return res.status(404).json({
+                message: "OTP not found.",
+                data: null,
+                status: 404,
+            });
+        }
+        if (otp_record.expires_at < new Date()) {
+            await OTP.deleteOne({
+                _id: otp_record._id,
+            });
+            return res.status(400).json({
+                message: "OTP has expired.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        if (otp_record.attempts >= 3) {
+            await OTP.deleteOne({
+                _id: otp_record._id,
+            });
+            return res.status(429).json({
+                message: "Too many incorrect OTP attempts.",
+                data: null,
+                status: 429,
+            });
+        }
+
+        const otp_hash = hash_otp(value.otp);
+        const is_valid = otp_hash === otp_record.otp_hash;
+
+        if (!is_valid) {
+            otp_record.attempts += 1;
+            await otp_record.save();
+            return res.status(400).json({
+                message: "Invalid OTP.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        // OTP is correct
+        user.phone_verified = true;
+        await user.save();
+        // Delete used OTP
+        await OTP.deleteOne({
+            _id: otp_record._id,
+        });
+        return res.status(200).json({
+            message: "Phone number verified successfully.",
+            data: {
+                phone_verified: true,
+            },
+            status: 200,
+        });
+    }),
+);
+// ----------------------------------
+
+// نسيان كلمة المرور
+// phone verfy
+/**
  * @description Request OTP for password reset
  * @route /api/auth/password/request-otp
  * @method POST
@@ -322,7 +438,7 @@ router.post(
 router.post(
     "/password/request-otp",
     asyncHandler(async (req, res) => {
-        const { error, value } = request_otp_validation(req.body);
+        const { error, value } = password_reset_request_validation(req.body);
         if (error) {
             return res.status(400).json({
                 message: `Validation Error: ${error.details[0].message}`,
@@ -332,20 +448,16 @@ router.post(
         }
 
         const user = await User.findOne({
-            phone: value.phone,
+            username: value.username,
         });
 
         if (!user) {
             return res.status(404).json({
-                message: "No account is associated with this phone number.",
+                message: "No account is associated with this username.",
                 data: null,
                 status: 404,
             });
         }
-
-        // =========================
-        // Check User Status
-        // =========================
 
         if (user.status !== "ACTIVE") {
             return res.status(403).json({
@@ -355,37 +467,23 @@ router.post(
             });
         }
 
-        // =========================
-        // Delete Previous OTPs
-        // =========================
+        if (!user.phone_verified) {
+            return res.status(400).json({
+                message:
+                    "Phone number verification is requiredK no way to reset password online.",
+                data: null,
+                status: 400,
+            });
+        }
 
         await OTP.deleteMany({
             user_id: user._id,
             purpose: "PASSWORD_RESET",
         });
 
-        // =========================
-        // Generate OTP
-        // =========================
-
         const otp = generate_otp();
-
-        // =========================
-        // Hash OTP
-        // =========================
-
         const otp_hash = hash_otp(otp);
-
-        // =========================
-        // Expiration
-        // =========================
-
         const expires_at = new Date(Date.now() + 5 * 60 * 1000);
-
-        // =========================
-        // Save OTP
-        // =========================
-
         const otp_record = new OTP({
             user_id: user._id,
             otp_hash,
@@ -393,23 +491,11 @@ router.post(
             expires_at,
             attempts: 0,
         });
-
         await otp_record.save();
-
-        // =========================
-        // WhatsApp Message
-        // =========================
-
         const message = `Your password reset verification code is: ${otp}
-
-This code is valid for 5 minutes.
-Do not share this code with anyone.`;
-
+        This code is valid for 5 minutes.
+        Do not share this code with anyone.`;
         await send_whatsapp_message(user.phone, message);
-
-        // =========================
-        // Response
-        // =========================
 
         return res.status(200).json({
             message: "Password reset OTP sent successfully.",
@@ -429,7 +515,6 @@ router.post(
     "/password/verify-otp",
     asyncHandler(async (req, res) => {
         const { error, value } = verify_otp_validation(req.body);
-
         if (error) {
             return res.status(400).json({
                 message: `Validation Error: ${error.details[0].message}`,
@@ -439,7 +524,7 @@ router.post(
         }
 
         const user = await User.findOne({
-            phone: value.phone,
+            username: value.username,
         });
 
         if (!user) {

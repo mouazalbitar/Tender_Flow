@@ -120,6 +120,31 @@ function bann_user_validation(obj) {
     return schema.validate(obj);
 }
 
+const password_reset_request_schema = joi
+    .object({
+        username: joi.string().min(3).max(30).required().label("Username"),
+    })
+    .messages(messages.messages_en);
+
+function password_reset_request_validation(obj) {
+    return password_reset_request_schema.validate(obj);
+}
+
+const password_phone_schema = joi
+    .object({
+        username: joi.string().required().label("Username"),
+        phone: joi
+            .string()
+            .pattern(/^\+9639\d{8}$/)
+            .length(13)
+            .required()
+            .label("Phone"),
+    })
+    .messages(messages.messages_en);
+function password_phone_validation(obj) {
+    return password_phone_schema.validate(obj);
+}
+
 module.exports = {
     create_user_validation,
     create_mobile_user_validation,
@@ -127,4 +152,6 @@ module.exports = {
     update_user_validation,
     reject_user_validation,
     bann_user_validation,
+    password_reset_request_validation,
+    password_phone_validation,
 };
