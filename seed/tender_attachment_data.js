@@ -16,7 +16,6 @@ const tender_attachments = [
         file_path:
             "uploads/tenders/attachments/67b000000000000000000001/technical_conditions.pdf",
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000002"),
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000001"),

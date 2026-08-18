@@ -1,10 +1,12 @@
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
 const { Tender } = require("../models/Tender");
+const { TenderAttachment } = require("../models/TenderAttachment"); 
 
 const { users } = require("./user_data");
 const { orgs } = require("./orgs_data");
 const { tenders } = require("./tenders_data");
+const { attachs } = require("./tender_attachment_data");
 
 const { connectToDB } = require("../config/db");
 
@@ -51,6 +53,38 @@ const send_tenders = async () => {
         await Tender.insertMany(tenders);
 
         console.log("Tenders inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting tenders:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Send attachments of tender
+// =========================
+
+const send_attachs = async () => {
+    try {
+        await TenderAttachment.insertMany(attachs);
+
+        console.log("Attachments of Tenders inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting tenders:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Delete attachments of tender
+// =========================
+
+const delete_attachs = async () => {
+    try {
+        await TenderAttachment.deleteMany();
+
+        console.log("Attachments of Tenders deleted successfully.");
     } catch (error) {
         console.error("Error inserting tenders:", error);
 
@@ -124,15 +158,21 @@ const runSeeder = async () => {
             // Tender third
             await send_tenders();
 
+            // Attachments of Tender
+            await send_attachs();
+
             console.log("Seeder completed successfully.");
         } else if (process.argv[2] === "-d") {
-            // Tender first
+            // Attachments of Tender First
+            await delete_attachs();
+
+            // Tender second
             await delete_tenders();
 
-            // User second
+            // User third
             await delete_users();
 
-            // Organization third
+            // Organization 
             await delete_orgs();
 
             console.log("Seeder deletion completed successfully.");
