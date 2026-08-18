@@ -48,6 +48,7 @@ const userSchema = new mongoose.Schema(
         },
         phone: {
             type: String,
+            unique: true,
         },
         phone_verified: {
             type: Boolean,

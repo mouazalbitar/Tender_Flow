@@ -7,6 +7,7 @@ const asyncHandler = require("express-async-handler");
 const {
     create_mobile_user_validation,
     login_validation,
+    update_phone_number,
     password_reset_request_validation,
 } = require("../validators/user_validation");
 const { create_org_validation } = require("../validators/org_validation");

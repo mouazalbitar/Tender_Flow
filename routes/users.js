@@ -7,6 +7,7 @@ const { User } = require("../models/User");
 const {
     create_user_validation,
     update_user_validation,
+    update_phone_number,
     reject_user_validation,
     bann_user_validation,
 } = require("../validators/user_validation");
@@ -108,6 +109,68 @@ router.post(
 );
 
 /**
+ * @description Update phone number
+ * @route /api/users/change_phone
+ * @method PUT
+ * @access private
+ */
+router.put(
+    "/change_phone",
+    verify_token,
+    asyncHandler(async (req, res) => {
+        const { error, value } = update_phone_number(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (user.phone === value.phone) {
+            return res.status(400).json({
+                message: "The new phone number is the same as the current phone number.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const existing_user = await User.findOne({
+            phone: value.phone,
+            _id: { $ne: user._id },
+        });
+        if (existing_user) {
+            return res.status(409).json({
+                message: "Phone number is already associated with another account.",
+                data: null,
+                status: 409,
+            });
+        }
+
+        user.phone = value.phone;
+        user.phone_verified = false;
+        await user.save();
+        return res.status(200).json({
+            message: "Phone number updated successfully. Verification is required.",
+            data: {
+                phone: user.phone,
+                phone_verified: user.phone_verified,
+            },
+            status: 200,
+        });
+    }),
+);
+
+/**
  * @description update user by id
  * @route /api/users/:id
  * @method PUT
@@ -157,6 +220,7 @@ router.put(
         });
     }),
 );
+
 
 /**
  * @description delete user by id

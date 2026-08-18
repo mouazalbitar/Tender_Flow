@@ -95,6 +95,20 @@ function update_user_validation(obj) {
     return schema.validate(obj);
 }
 
+function update_phone_number(obj) {
+    const schema = joi
+        .object({
+            phone: joi
+                .string()
+                .pattern(/^\+9639\d{8}$/)
+                .length(13)
+                .required()
+                .label("Phone"),
+        })
+        .messages(messages.messages_en);
+    return schema.validate(obj);
+}
+
 function reject_user_validation(obj) {
     const schema = joi
         .object({
@@ -131,4 +145,5 @@ module.exports = {
     reject_user_validation,
     bann_user_validation,
     password_reset_request_validation,
+    update_phone_number,
 };
