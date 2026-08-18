@@ -1,10 +1,6 @@
 const joi = require("joi");
 const messages = require("./messages");
 
-// =========================
-// Request OTP
-// =========================
-
 const otp_request_schema = joi
     .object({
         phone: joi
@@ -15,10 +11,6 @@ const otp_request_schema = joi
             .label("Phone"),
     })
     .messages(messages.messages_en);
-
-// =========================
-// Verify OTP
-// =========================
 
 const otp_verify_schema = joi
     .object({
@@ -33,10 +25,6 @@ const otp_verify_schema = joi
             .label("OTP"),
     })
     .messages(messages.messages_en);
-
-// =========================
-// Validation Functions
-// =========================
 
 function request_otp_validation(obj) {
     return otp_request_schema.validate(obj);

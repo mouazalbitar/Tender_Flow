@@ -8,7 +8,6 @@ const {
     create_mobile_user_validation,
     login_validation,
     password_reset_request_validation,
-    password_phone_validation,
 } = require("../validators/user_validation");
 const { create_org_validation } = require("../validators/org_validation");
 const bcrypt = require("bcryptjs");
@@ -632,10 +631,6 @@ router.post(
 router.post(
     "/password/reset",
     asyncHandler(async (req, res) => {
-        // =========================
-        // Validation
-        // =========================
-
         const { error, value } = reset_password_validation(req.body);
 
         if (error) {

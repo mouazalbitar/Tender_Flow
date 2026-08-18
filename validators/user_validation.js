@@ -46,7 +46,6 @@ function create_user_validation(obj) {
             device_token: user_schema.device_token.optional(),
         })
         .messages(messages.messages_en);
-
     return schema.validate(obj);
 }
 
@@ -65,7 +64,6 @@ function create_mobile_user_validation(obj) {
             device_token: user_schema.device_token.optional(),
         })
         .messages(messages.messages_en);
-
     return schema.validate(obj);
 }
 
@@ -76,7 +74,6 @@ function login_validation(obj) {
             password: user_schema.password.required(),
         })
         .messages(messages.messages_en);
-
     return schema.validate(obj);
 }
 
@@ -89,14 +86,12 @@ function update_user_validation(obj) {
             father_name: user_schema.father_name.optional(),
             national_num: user_schema.national_num.optional(),
             email: user_schema.email.optional(),
-            phone: user_schema.phone.optional(),
             username: user_schema.username.optional(),
             reject_message: user_schema.reject_message.optional(),
             bann_message: user_schema.bann_message.optional(),
             device_token: user_schema.device_token.optional(),
         })
         .messages(messages.messages_en);
-
     return schema.validate(obj);
 }
 
@@ -106,7 +101,6 @@ function reject_user_validation(obj) {
             reject_message: user_schema.reject_message.required(),
         })
         .messages(messages.messages_en);
-
     return schema.validate(obj);
 }
 
@@ -125,24 +119,8 @@ const password_reset_request_schema = joi
         username: joi.string().min(3).max(30).required().label("Username"),
     })
     .messages(messages.messages_en);
-
 function password_reset_request_validation(obj) {
     return password_reset_request_schema.validate(obj);
-}
-
-const password_phone_schema = joi
-    .object({
-        username: joi.string().required().label("Username"),
-        phone: joi
-            .string()
-            .pattern(/^\+9639\d{8}$/)
-            .length(13)
-            .required()
-            .label("Phone"),
-    })
-    .messages(messages.messages_en);
-function password_phone_validation(obj) {
-    return password_phone_schema.validate(obj);
 }
 
 module.exports = {
@@ -153,5 +131,4 @@ module.exports = {
     reject_user_validation,
     bann_user_validation,
     password_reset_request_validation,
-    password_phone_validation,
 };
