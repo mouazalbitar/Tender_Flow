@@ -17,7 +17,11 @@ const user_schema = {
     father_name: joi.string().min(2).max(30).trim().label("Father's Name"),
     national_num: joi.string().min(9).max(11).label("National Number"),
     email: joi.string().email().label("Email"),
-    phone: joi.string().label("Phone"),
+    phone: joi
+        .string()
+        .pattern(/^\+9639\d{8}$/)
+        .length(13)
+        .label("Phone"),
     username: joi.string().min(3).max(30).trim().label("Username"),
     password: joi.string().min(6).max(30).label("Password"),
     reject_message: joi.string().min(3).label("Reject Message"),

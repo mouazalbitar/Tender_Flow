@@ -49,6 +49,10 @@ const userSchema = new mongoose.Schema(
         phone: {
             type: String,
         },
+        phone_verified: {
+            type: Boolean,
+            default: false,
+        },
         username: {
             type: String,
             required: true,
