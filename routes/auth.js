@@ -14,6 +14,21 @@ const jwt = require("jsonwebtoken");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
 const uploadRegistration = require("../middlewares/upload_registration");
+const { OTP } = require("../models/OTP");
+const { generate_otp, hash_otp } = require("../utils/otp");
+const { send_whatsapp_message } = require("../services/whatsapp_service");
+const {
+    request_otp_validation,
+    verify_otp_validation,
+} = require("../validators/otp_validation");
+const {
+    generate_reset_token,
+    hash_reset_token,
+} = require("../utils/password_reset_token");
+const { PasswordResetToken } = require("../models/PasswordResetToken");
+const {
+    reset_password_validation,
+} = require("../validators/password_reset_validation");
 
 /**
  * @description register a new mobile user & his organization
@@ -216,6 +231,410 @@ router.post(
             data: { user: user_data, Organization: org },
             status: 200,
             token: token,
+        });
+    }),
+);
+
+/**
+ * @description Send OTP for phone verification
+ * @route /api/auth/phone/send-otp
+ * @method POST
+ * @access private - EXECUTOR
+ */
+router.post(
+    "/phone/send-otp",
+    verify_token,
+    authorizeRoles("EXECUTOR"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.phone) {
+            return res.status(400).json({
+                message: "Phone number is not registered.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        if (user.phone_verified) {
+            return res.status(400).json({
+                message: "Phone number is already verified.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        // Delete previous unused OTPs
+        await OTP.deleteMany({
+            user_id: user._id,
+            purpose: "PHONE_VERIFICATION",
+            verified: false,
+        });
+
+        // Generate OTP
+        const otp = generate_otp();
+
+        // Hash OTP
+        const otp_hash = hash_otp(otp);
+
+        // OTP expires after 5 minutes
+        const expires_at = new Date(Date.now() + 5 * 60 * 1000);
+
+        // Save OTP
+        const otp_record = new OTP({
+            user_id: user._id,
+            otp_hash,
+            purpose: "PHONE_VERIFICATION",
+            expires_at,
+        });
+
+        await otp_record.save();
+
+        // WhatsApp message
+        const message = `Your verification code is: ${otp}
+        This code is valid for 5 minutes.
+        Do not share this code with anyone.`;
+
+        // Send WhatsApp message
+        await send_whatsapp_message(user.phone, message);
+
+        res.status(200).json({
+            message: "OTP sent successfully.",
+            data: null,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Request OTP for password reset
+ * @route /api/auth/password/request-otp
+ * @method POST
+ * @access public
+ */
+router.post(
+    "/password/request-otp",
+    asyncHandler(async (req, res) => {
+        const { error, value } = request_otp_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findOne({
+            phone: value.phone,
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "No account is associated with this phone number.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        // =========================
+        // Check User Status
+        // =========================
+
+        if (user.status !== "ACTIVE") {
+            return res.status(403).json({
+                message: "This account is not active.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        // =========================
+        // Delete Previous OTPs
+        // =========================
+
+        await OTP.deleteMany({
+            user_id: user._id,
+            purpose: "PASSWORD_RESET",
+        });
+
+        // =========================
+        // Generate OTP
+        // =========================
+
+        const otp = generate_otp();
+
+        // =========================
+        // Hash OTP
+        // =========================
+
+        const otp_hash = hash_otp(otp);
+
+        // =========================
+        // Expiration
+        // =========================
+
+        const expires_at = new Date(Date.now() + 5 * 60 * 1000);
+
+        // =========================
+        // Save OTP
+        // =========================
+
+        const otp_record = new OTP({
+            user_id: user._id,
+            otp_hash,
+            purpose: "PASSWORD_RESET",
+            expires_at,
+            attempts: 0,
+        });
+
+        await otp_record.save();
+
+        // =========================
+        // WhatsApp Message
+        // =========================
+
+        const message = `Your password reset verification code is: ${otp}
+
+This code is valid for 5 minutes.
+Do not share this code with anyone.`;
+
+        await send_whatsapp_message(user.phone, message);
+
+        // =========================
+        // Response
+        // =========================
+
+        return res.status(200).json({
+            message: "Password reset OTP sent successfully.",
+            data: null,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Verify OTP for password reset
+ * @route /api/auth/password/verify-otp
+ * @method POST
+ * @access public
+ */
+router.post(
+    "/password/verify-otp",
+    asyncHandler(async (req, res) => {
+        const { error, value } = verify_otp_validation(req.body);
+
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findOne({
+            phone: value.phone,
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        const otp_record = await OTP.findOne({
+            user_id: user._id,
+            purpose: "PASSWORD_RESET",
+        }).sort({
+            createdAt: -1,
+        });
+
+        if (!otp_record) {
+            return res.status(404).json({
+                message: "OTP not found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (otp_record.expires_at < new Date()) {
+            await OTP.deleteOne({
+                _id: otp_record._id,
+            });
+
+            return res.status(400).json({
+                message: "OTP has expired.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        if (otp_record.attempts >= 3) {
+            await OTP.deleteOne({
+                _id: otp_record._id,
+            });
+
+            return res.status(429).json({
+                message: "Too many incorrect OTP attempts.",
+                data: null,
+                status: 429,
+            });
+        }
+
+        const otp_hash = hash_otp(value.otp);
+        const is_valid = otp_hash === otp_record.otp_hash;
+
+        if (!is_valid) {
+            otp_record.attempts += 1;
+            await otp_record.save();
+            return res.status(400).json({
+                message: "Invalid OTP.",
+                data: null,
+                status: 400,
+            });
+        }
+        const reset_token = generate_reset_token();
+
+        // Hash reset token
+        const reset_token_hash = hash_reset_token(reset_token);
+
+        // Delete previous reset tokens
+        await PasswordResetToken.deleteMany({
+            user_id: user._id,
+        });
+
+        // Reset token expires after 10 minutes
+        const expires_at = new Date(Date.now() + 10 * 60 * 1000);
+
+        // Save reset token
+        const reset_token_record = new PasswordResetToken({
+            user_id: user._id,
+            token_hash: reset_token_hash,
+            expires_at,
+        });
+
+        await reset_token_record.save();
+
+        // Delete used OTP
+        await OTP.deleteOne({
+            _id: otp_record._id,
+        });
+
+        return res.status(200).json({
+            message: "OTP verified successfully.",
+            data: {
+                reset_token,
+            },
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Reset password using reset token
+ * @route /api/auth/password/reset
+ * @method POST
+ * @access public
+ */
+router.post(
+    "/password/reset",
+    asyncHandler(async (req, res) => {
+        // =========================
+        // Validation
+        // =========================
+
+        const { error, value } = reset_password_validation(req.body);
+
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        // =========================
+        // Hash reset token
+        // =========================
+
+        const token_hash = hash_reset_token(value.reset_token);
+
+        // =========================
+        // Find reset token
+        // =========================
+
+        const reset_token_record = await PasswordResetToken.findOne({
+            token_hash,
+        });
+
+        if (!reset_token_record) {
+            return res.status(400).json({
+                message: "Invalid or expired reset token.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        // =========================
+        // Check expiration
+        // =========================
+
+        if (reset_token_record.expires_at < new Date()) {
+            await PasswordResetToken.deleteOne({
+                _id: reset_token_record._id,
+            });
+
+            return res.status(400).json({
+                message: "Reset token has expired.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        // =========================
+        // Find user
+        // =========================
+
+        const user = await User.findById(reset_token_record.user_id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        // =========================
+        // Hash new password
+        // =========================
+
+        const hashed_password = await bcrypt.hash(value.password, 10);
+
+        user.password = hashed_password;
+
+        await user.save();
+
+        // =========================
+        // Delete reset token
+        // =========================
+
+        await PasswordResetToken.deleteOne({
+            _id: reset_token_record._id,
+        });
+
+        return res.status(200).json({
+            message: "Password reset successfully.",
+            data: null,
+            status: 200,
         });
     }),
 );
