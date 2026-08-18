@@ -59,8 +59,7 @@ router.get(
             tenders = await Tender.find({
                 publisher_org_id: req.user.org_id,
             }).sort({ createdAt: -1 });
-        }
-        else if (req.user.type === "EXECUTOR") {
+        } else if (req.user.type === "EXECUTOR") {
             tenders = await Tender.find({
                 status: {
                     $in: ["PUBLISHED", "OPEN", "REPUBLISHED"],
@@ -611,6 +610,167 @@ router.delete(
         res.status(200).json({
             message: "Tender Attachment Deleted Successfully.",
             data: null,
+            status: 200,
+        });
+    }),
+);
+
+// change status of tender
+
+/**
+ * @description Publish tender (DRAFT → PUBLISHED)
+ * @route /api/tenders/:tender_id/publish
+ * @method POST
+ * @access private - PUBLISHER
+ */
+router.post(
+    "/:tender_id/publish",
+    verify_token,
+    authorizeRoles("PUBLISHER"),
+    asyncHandler(async (req, res) => {
+        const { tender_id } = req.params;
+
+        const tender = await Tender.findById(tender_id);
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (tender.status !== "DRAFT") {
+            return res.status(400).json({
+                message: "Only DRAFT tenders can be published.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to publish this tender.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        if (!tender.submission_start || !tender.submission_deadline) {
+            return res.status(400).json({
+                message: "Submission start and deadline are required.",
+                data: null,
+                status: 400,
+            });
+        }
+        if (tender.submission_deadline <= tender.submission_start) {
+            return res.status(400).json({
+                message: "Submission deadline must be after submission start.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        tender.status = "PUBLISHED";
+        tender.published_at = new Date();
+        const result = await tender.save();
+        res.status(200).json({
+            message: "Tender Published Successfully.",
+            data: result,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Cancel tender
+ * @route /api/tenders/:tender_id/cancel
+ * @method POST
+ * @access private - PUBLISHER
+ * [
+ *      DRAFT       ──► CANCELLED
+ *      PUBLISHED   ──► CANCELLED
+ *      OPEN        ──► CANCELLED
+ *      REPUBLISHED ──► CANCELLED
+ * ]
+ */
+router.post(
+    "/:tender_id/cancel",
+    verify_token,
+    authorizeRoles("PUBLISHER"),
+    asyncHandler(async (req, res) => {
+        const { tender_id } = req.params;
+
+        const tender = await Tender.findById(tender_id);
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        const cancellableStatuses = [
+            "DRAFT",
+            "PUBLISHED",
+            "OPEN",
+            "REPUBLISHED",
+        ];
+        if (!cancellableStatuses.includes(tender.status)) {
+            return res.status(400).json({
+                message: `Tender cannot be cancelled while it is in ${tender.status} status.`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to cancel this tender.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        tender.status = "CANCELLED";
+        const result = await tender.save();
+
+        res.status(200).json({
+            message: "Tender Cancelled Successfully.",
+            data: result,
             status: 200,
         });
     }),
