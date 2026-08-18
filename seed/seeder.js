@@ -6,7 +6,7 @@ const { TenderAttachment } = require("../models/TenderAttachment");
 const { users } = require("./user_data");
 const { orgs } = require("./orgs_data");
 const { tenders } = require("./tenders_data");
-const { attachs } = require("./tender_attachment_data");
+const { tender_attachments } = require("./tender_attachment_data");
 
 const { connectToDB } = require("../config/db");
 
@@ -66,7 +66,7 @@ const send_tenders = async () => {
 
 const send_attachs = async () => {
     try {
-        await TenderAttachment.insertMany(attachs);
+        await TenderAttachment.insertMany(tender_attachments);
 
         console.log("Attachments of Tenders inserted successfully.");
     } catch (error) {
