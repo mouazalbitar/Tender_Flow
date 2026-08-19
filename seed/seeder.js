@@ -8,6 +8,8 @@ const { tenders } = require("./tenders_data");
 const { tender_attachments } = require("./tender_attachment_data");
 const { Bid } = require("../models/Bid");
 const { bids } = require("./bid_data");
+const { Permission } = require("../models/Permission");
+const {permissions} = require("./permissions_data");
 
 const { connectToDB } = require("../config/db");
 
@@ -88,6 +90,38 @@ const send_bids = async () => {
         console.log("Bids inserted successfully.");
     } catch (error) {
         console.error("Error inserting bids:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Send permissions
+// =========================
+
+const send_permissions = async () => {
+    try {
+        await Permission.insertMany(permissions);
+
+        console.log("Permissions inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting permissions:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Delete permissions
+// =========================
+
+const delete_permissions = async () => {
+    try {
+        await Permission.deleteMany();
+
+        console.log("Permissions deleted successfully.");
+    } catch (error) {
+        console.error("Error deleting permissions:", error);
 
         throw error;
     }
@@ -197,8 +231,12 @@ const runSeeder = async () => {
             // Bids
             await send_bids();
 
+             await send_permissions();
+
             console.log("Seeder completed successfully.");
         } else if (process.argv[2] === "-d") {
+
+             await delete_permissions();
             // Bids first
             await delete_bids();
 
