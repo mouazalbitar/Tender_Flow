@@ -135,7 +135,7 @@ router.post(
  * @description Get bids for a tender
  * @route /api/bids/tender/:tender_id
  * @method GET
- * @access private
+ * @access private - ADMIN / PUBLISHER
  */
 router.get(
     "/tender/:tender_id",
@@ -158,12 +158,11 @@ router.get(
                 status: 404,
             });
         }
-    
+
         if (user.type === "ADMIN") {
             const bids = await Bid.find({
                 tender_id: tender._id,
             }).populate("executor_org_id", "org_name");
-
             return res.status(200).json({
                 message: "Bids retrieved successfully.",
                 data: bids,
@@ -183,27 +182,9 @@ router.get(
                     status: 403,
                 });
             }
-            const bids = await Bid.find({
-                tender_id: tender._id,
-            }).populate("executor_org_id", "org_name");
-            return res.status(200).json({
-                message: "Bids retrieved successfully.",
-                data: bids,
-                status: 200,
-            });
-        }
 
-        if (user.type === "EXECUTOR") {
-            if (!user.org_id) {
-                return res.status(400).json({
-                    message: "User is not associated with an organization.",
-                    data: null,
-                    status: 400,
-                });
-            }
             const bids = await Bid.find({
                 tender_id: tender._id,
-                executor_org_id: user.org_id,
             }).populate("executor_org_id", "org_name");
             return res.status(200).json({
                 message: "Bids retrieved successfully.",
@@ -216,6 +197,66 @@ router.get(
             message: "You are not authorized to view bids.",
             data: null,
             status: 403,
+        });
+    }),
+);
+
+/**
+ * @description Get executor's bid for a tender
+ * @route /api/bids/my-bids/:tender_id
+ * @method GET
+ * @access private - EXECUTOR
+ */
+router.get(
+    "/my-bids/:tender_id",
+    verify_token,
+    authorizeRoles("EXECUTOR"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(400).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const tender = await Tender.findById(req.params.tender_id);
+
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender not found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        const bid = await Bid.findOne({
+            tender_id: tender._id,
+            executor_org_id: user.org_id,
+        }).populate("executor_org_id", "org_name");
+
+        if (!bid) {
+            return res.status(404).json({
+                message:
+                    "Your organization has not submitted a bid for this tender.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Bid retrieved successfully.",
+            data: bid,
+            status: 200,
         });
     }),
 );
