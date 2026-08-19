@@ -21,7 +21,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/permissions", require("./routes/permission_routes"));
 app.use("/api/roles", require("./routes/role_routes"));
-app.use("/api/users", require("./routes/user_role_routes"));
+app.use("/api/users_role", require("./routes/user_role_routes"));
 app.use("/api/orgs", require("./routes/orgs"));
 app.use("/api/tenders", require("./routes/tenders"));
 app.use("/api/bids", require("./routes/bids"));
