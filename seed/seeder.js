@@ -1,12 +1,13 @@
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
 const { Tender } = require("../models/Tender");
-const { TenderAttachment } = require("../models/TenderAttachment"); 
-
+const { TenderAttachment } = require("../models/TenderAttachment");
 const { users } = require("./user_data");
 const { orgs } = require("./orgs_data");
 const { tenders } = require("./tenders_data");
 const { tender_attachments } = require("./tender_attachment_data");
+const { Bid } = require("../models/Bid");
+const { bids } = require("./bid_data");
 
 const { connectToDB } = require("../config/db");
 
@@ -71,6 +72,38 @@ const send_attachs = async () => {
         console.log("Attachments of Tenders inserted successfully.");
     } catch (error) {
         console.error("Error inserting tenders:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Send bids
+// =========================
+
+const send_bids = async () => {
+    try {
+        await Bid.insertMany(bids);
+
+        console.log("Bids inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting bids:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Delete bids
+// =========================
+
+const delete_bids = async () => {
+    try {
+        await Bid.deleteMany();
+
+        console.log("Bids deleted successfully.");
+    } catch (error) {
+        console.error("Error deleting bids:", error);
 
         throw error;
     }
@@ -161,9 +194,15 @@ const runSeeder = async () => {
             // Attachments of Tender
             await send_attachs();
 
+            // Bids
+            await send_bids();
+
             console.log("Seeder completed successfully.");
         } else if (process.argv[2] === "-d") {
-            // Attachments of Tender First
+            // Bids first
+            await delete_bids();
+
+            // Attachments of Tender
             await delete_attachs();
 
             // Tender second
@@ -172,7 +211,7 @@ const runSeeder = async () => {
             // User third
             await delete_users();
 
-            // Organization 
+            // Organization
             await delete_orgs();
 
             console.log("Seeder deletion completed successfully.");
