@@ -9,6 +9,7 @@ const {
     login_validation,
     update_phone_number,
     password_reset_request_validation,
+    change_password_validation,
 } = require("../validators/user_validation");
 const { create_org_validation } = require("../validators/org_validation");
 const bcrypt = require("bcryptjs");
@@ -233,6 +234,72 @@ router.post(
             data: { user: user_data, Organization: org },
             status: 200,
             token: token,
+        });
+    }),
+);
+
+/**
+ * @description Change password for authenticated user
+ * @route /api/auth/change-password
+ * @method PUT
+ * @access private
+ */
+router.put(
+    "/change-password",
+    verify_token,
+    asyncHandler(async (req, res) => {
+        const { error, value } = change_password_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
+
+        const user = await User.findById(req.user.id).select("+password");
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        const is_password_correct = await bcrypt.compare(
+            value.old_password,
+            user.password,
+        );
+        if (!is_password_correct) {
+            return res.status(400).json({
+                message: "The old password is incorrect.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const is_same_password = await bcrypt.compare(
+            value.new_password,
+            user.password,
+        );
+        if (is_same_password) {
+            return res.status(400).json({
+                message:
+                    "The new password must be different from the old password.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const hashed_password = await bcrypt.hash(value.new_password, 10);
+        user.password = hashed_password;
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Password changed successfully.",
+            data: null,
+            status: 200,
         });
     }),
 );

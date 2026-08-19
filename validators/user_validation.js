@@ -137,6 +137,26 @@ function password_reset_request_validation(obj) {
     return password_reset_request_schema.validate(obj);
 }
 
+function change_password_validation(obj) {
+    const schema = joi
+        .object({
+            old_password: joi
+                .string()
+                .min(6)
+                .max(30)
+                .required()
+                .label("Old Password"),
+            new_password: joi
+                .string()
+                .min(6)
+                .max(30)
+                .required()
+                .label("New Password"),
+        })
+        .messages(messages.messages_en);
+    return schema.validate(obj);
+}
+
 module.exports = {
     create_user_validation,
     create_mobile_user_validation,
@@ -146,4 +166,5 @@ module.exports = {
     bann_user_validation,
     password_reset_request_validation,
     update_phone_number,
+    change_password_validation,
 };
