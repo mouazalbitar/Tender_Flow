@@ -9,7 +9,9 @@ const { tender_attachments } = require("./tender_attachment_data");
 const { Bid } = require("../models/Bid");
 const { bids } = require("./bid_data");
 const { Permission } = require("../models/Permission");
-const {permissions} = require("./permissions_data");
+const { permissions } = require("./permissions_data");
+const { Role } = require("../models/Role");
+const { roles } = require("./roles_data");
 
 const { connectToDB } = require("../config/db");
 
@@ -106,6 +108,108 @@ const send_permissions = async () => {
         console.log("Permissions inserted successfully.");
     } catch (error) {
         console.error("Error inserting permissions:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Send roles
+// =========================
+
+const send_roles = async () => {
+    try {
+        const role_documents = [];
+
+        for (const role of roles) {
+            const permission_documents = await Permission.find({
+                code: { $in: role.permission_codes },
+            });
+
+            const permission_map = new Map(
+                permission_documents.map((permission) => [
+                    permission.code,
+                    permission._id,
+                ]),
+            );
+
+            const missing_permissions = role.permission_codes.filter(
+                (code) => !permission_map.has(code),
+            );
+
+            if (missing_permissions.length > 0) {
+                throw new Error(
+                    `Permissions not found for role ${role.name}: ${missing_permissions.join(", ")}`,
+                );
+            }
+
+            const role_permissions = role.permission_codes.map((code) =>
+                permission_map.get(code),
+            );
+
+            role_documents.push({
+                code: role.code,
+                name: role.name,
+                name_ar: role.name_ar,
+                description: role.description,
+                permissions: role_permissions,
+                is_active: role.is_active,
+            });
+        }
+
+        await Role.insertMany(role_documents);
+
+        console.log("Roles inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting roles:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Assign Super Admin Role
+// =========================
+
+const assign_super_admin_role = async () => {
+    try {
+        const super_admin_role = await Role.findOne({
+            code: "SUPER_ADMIN",
+        });
+
+        if (!super_admin_role) {
+            throw new Error("SUPER_ADMIN role not found.");
+        }
+        const result = await User.updateOne(
+            { type: "ADMIN" },
+            {
+                $set: {
+                    role_id: super_admin_role._id,
+                },
+            },
+        );
+
+        if (result.matchedCount === 0) {
+            throw new Error("ADMIN user not found.");
+        }
+        console.log("SUPER_ADMIN role assigned successfully.");
+    } catch (error) {
+        console.error("Error assigning SUPER_ADMIN role:", error);
+        throw error;
+    }
+};
+
+// =========================
+// Delete roles
+// =========================
+
+const delete_roles = async () => {
+    try {
+        await Role.deleteMany();
+
+        console.log("Roles deleted successfully.");
+    } catch (error) {
+        console.error("Error deleting roles:", error);
 
         throw error;
     }
@@ -231,12 +335,18 @@ const runSeeder = async () => {
             // Bids
             await send_bids();
 
-             await send_permissions();
+            await send_permissions();
+
+            await send_roles();
+
+            await assign_super_admin_role();
 
             console.log("Seeder completed successfully.");
         } else if (process.argv[2] === "-d") {
+            await delete_roles();
 
-             await delete_permissions();
+            await delete_permissions();
+
             // Bids first
             await delete_bids();
 
