@@ -230,7 +230,6 @@ router.get(
         }
 
         const tender = await Tender.findById(req.params.tender_id);
-
         if (!tender) {
             return res.status(404).json({
                 message: "Tender not found.",
@@ -238,7 +237,6 @@ router.get(
                 status: 404,
             });
         }
-
         const bid = await Bid.findOne({
             tender_id: tender._id,
             executor_org_id: user.org_id,
@@ -256,6 +254,52 @@ router.get(
         return res.status(200).json({
             message: "Bid retrieved successfully.",
             data: bid,
+            status: 200,
+        });
+    }),
+);
+
+/**
+ * @description Get all bids submitted by the executor organization
+ * @route /api/bids/my-bids
+ * @method GET
+ * @access private - EXECUTOR
+ */
+router.get(
+    "/my-bids",
+    verify_token,
+    authorizeRoles("EXECUTOR"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+        if (!user.org_id) {
+            return res.status(400).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 400,
+            });
+        }
+        const bids = await Bid.find({
+            executor_org_id: user.org_id,
+        })
+            .populate(
+                "tender_id",
+                "title description status submission_start submission_deadline estimated_value currency execution_location",
+            )
+            .populate("executor_org_id", "org_name")
+            .sort({
+                createdAt: -1,
+            });
+
+        return res.status(200).json({
+            message: "Your bids retrieved successfully.",
+            data: bids,
             status: 200,
         });
     }),
