@@ -5,7 +5,9 @@ const asyncHandler = require("express-async-handler");
 const { Organization } = require("../models/Organization");
 const { User } = require("../models/User");
 const { verify_token } = require("../middlewares/verify_token");
-const { authorizeRoles } = require("../middlewares/role_check");
+const {
+    require_permission,
+} = require("../middlewares/permission_middleware.js");
 const {
     create_org_validation,
     update_org_validation,
@@ -21,6 +23,7 @@ const uploadOrganization = require("../middlewares/upload_organization");
 router.get(
     "/publishers",
     verify_token,
+    require_permission("ORG_READ"),
     asyncHandler(async (req, res) => {
         const orgs = await Organization.find({
             _type: "PUBLISHER",
@@ -42,6 +45,7 @@ router.get(
 router.get(
     "/executors",
     verify_token,
+    require_permission("ORG_READ"),
     asyncHandler(async (req, res) => {
         const orgs = await Organization.find({
             _type: "EXECUTOR",
@@ -63,6 +67,7 @@ router.get(
 router.get(
     "/:id",
     verify_token,
+    require_permission("ORG_READ"),
     asyncHandler(async (req, res) => {
         const org = await Organization.findById(req.params.id);
         if (!org) {
@@ -94,7 +99,7 @@ router.post(
         { name: "commercial_register", maxCount: 1 },
         { name: "license", maxCount: 1 },
     ]),
-    authorizeRoles("ADMIN"),
+    require_permission("ORG_CREATE"),
     asyncHandler(async (req, res) => {
         const { error } = create_org_validation(req.body);
         if (error) {
@@ -142,6 +147,7 @@ router.post(
 router.put(
     "/:id",
     verify_token,
+    require_permission("ORG_UPDATE"),
     asyncHandler(async (req, res) => {
         const { error } = update_org_validation(req.body);
         if (error) {
@@ -181,6 +187,7 @@ router.put(
 router.get(
     "/:org_id/users",
     verify_token,
+    require_permission("USER_READ"),
     asyncHandler(async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(req.params.org_id)) {
             return res.status(400).json({

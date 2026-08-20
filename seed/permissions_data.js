@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const permissions = [
-
     // ==================================================
     // TENDER
     // ==================================================
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000001"),
         code: "TENDER_CREATE",
@@ -14,6 +14,7 @@ const permissions = [
         description: "Allows the user to create a new tender.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000002"),
         code: "TENDER_READ",
@@ -23,6 +24,7 @@ const permissions = [
         description: "Allows the user to view tenders.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000003"),
         code: "TENDER_UPDATE",
@@ -32,6 +34,7 @@ const permissions = [
         description: "Allows the user to update tender information.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000004"),
         code: "TENDER_DELETE",
@@ -41,6 +44,7 @@ const permissions = [
         description: "Allows the user to delete a tender.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000005"),
         code: "TENDER_PUBLISH",
@@ -50,6 +54,7 @@ const permissions = [
         description: "Allows the user to publish a tender.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000006"),
         code: "TENDER_CANCEL",
@@ -59,6 +64,7 @@ const permissions = [
         description: "Allows the user to cancel a tender.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000007"),
         code: "TENDER_CLOSE",
@@ -68,6 +74,7 @@ const permissions = [
         description: "Allows the user to close a tender.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000008"),
         code: "TENDER_REPUBLISH",
@@ -77,13 +84,69 @@ const permissions = [
         description: "Allows the user to republish a tender.",
         is_active: true,
     },
+
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000055"),
         code: "TENDER_VIEW_ALL",
         name: "View All Tenders",
         name_ar: "عرض جميع المناقصات",
         module: "TENDER",
-        description: "View All Tenders for admin.",
+        description: "Allows the user to view all tenders.",
+        is_active: true,
+    },
+
+    {
+        _id: new mongoose.Types.ObjectId("68b000000000000000000060"),
+        code: "TENDER_AWARD",
+        name: "Award Tender",
+        name_ar: "ترسية المناقصة",
+        module: "TENDER",
+        description:
+            "Allows the user to award a tender after the bid evaluation process.",
+        is_active: true,
+    },
+
+    // ==================================================
+    // TENDER ATTACHMENTS
+    // ==================================================
+
+    {
+        _id: new mongoose.Types.ObjectId("68b000000000000000000056"),
+        code: "TENDER_ATTACHMENT_READ",
+        name: "View Tender Attachments",
+        name_ar: "عرض مرفقات المناقصة",
+        module: "TENDER",
+        description: "Allows the user to view tender attachments.",
+        is_active: true,
+    },
+
+    {
+        _id: new mongoose.Types.ObjectId("68b000000000000000000057"),
+        code: "TENDER_ATTACHMENT_CREATE",
+        name: "Create Tender Attachment",
+        name_ar: "إضافة مرفق للمناقصة",
+        module: "TENDER",
+        description: "Allows the user to add a tender attachment.",
+        is_active: true,
+    },
+
+    {
+        _id: new mongoose.Types.ObjectId("68b000000000000000000058"),
+        code: "TENDER_ATTACHMENT_UPDATE",
+        name: "Update Tender Attachment",
+        name_ar: "تعديل مرفق للمناقصة",
+        module: "TENDER",
+        description: "Allows the user to update a tender attachment.",
+        is_active: true,
+    },
+
+    {
+        _id: new mongoose.Types.ObjectId("68b000000000000000000059"),
+        code: "TENDER_ATTACHMENT_DELETE",
+        name: "Delete Tender Attachment",
+        name_ar: "حذف مرفق المناقصة",
+        module: "TENDER",
+        description: "Allows the user to delete a tender attachment.",
         is_active: true,
     },
 
@@ -148,6 +211,17 @@ const permissions = [
         name_ar: "رفض العرض",
         module: "BID",
         description: "Allows the user to reject a bid.",
+        is_active: true,
+    },
+
+    {
+        _id: new mongoose.Types.ObjectId("68b000000000000000000061"),
+        code: "BID_EVALUATE",
+        name: "Evaluate Bid",
+        name_ar: "تقييم العرض",
+        module: "BID",
+        description:
+            "Allows the user to evaluate bids during the bid opening and evaluation process.",
         is_active: true,
     },
 
@@ -323,7 +397,7 @@ const permissions = [
         name: "Manage Roles",
         name_ar: "إدارة الأدوار",
         module: "SYSTEM",
-        description: "Allows the user to create, update and manage roles.",
+        description: "Allows the user to manage roles.",
         is_active: true,
     },
 
@@ -333,7 +407,7 @@ const permissions = [
         name: "Manage Permissions",
         name_ar: "إدارة الصلاحيات",
         module: "SYSTEM",
-        description: "Allows the user to create, update and manage permissions.",
+        description: "Allows the user to manage permissions.",
         is_active: true,
     },
 ];

@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const { verify_token } = require("../middlewares/verify_token");
-const { authorizeRoles } = require("../middlewares/role_check");
 const {
     require_permission,
 } = require("../middlewares/permission_middleware.js");
@@ -235,7 +234,7 @@ router.put(
 router.get(
     "/:tender_id/attachments",
     verify_token,
-    authorizeRoles("PUBLISHER", "EXECUTOR", "ADMIN"),
+    require_permission("TENDER_ATTACHMENT_READ"),
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
 
@@ -306,7 +305,7 @@ router.get(
 router.post(
     "/:tender_id/attachments",
     verify_token,
-    authorizeRoles("PUBLISHER"),
+    require_permission("TENDER_ATTACHMENT_CREATE"),
     upload_tender_attachment.single("file"),
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
@@ -412,7 +411,7 @@ router.post(
 router.put(
     "/:tender_id/attachments/:attachment_id",
     verify_token,
-    authorizeRoles("PUBLISHER"),
+    require_permission("TENDER_ATTACHMENT_UPDATE"),
     upload_tender_attachment.single("file"),
     asyncHandler(async (req, res) => {
         const { tender_id, attachment_id } = req.params;
@@ -535,88 +534,88 @@ router.put(
     }),
 );
 
-/**
- * @description Delete tender attachment
- * @route /api/tenders/:tender_id/attachments/:attachment_id
- * @method DELETE
- * @access private - PUBLISHER
- */
-router.delete(
-    "/:tender_id/attachments/:attachment_id",
-    verify_token,
-    authorizeRoles("PUBLISHER"),
-    asyncHandler(async (req, res) => {
-        const { tender_id, attachment_id } = req.params;
+// /**
+//  * @description Delete tender attachment
+//  * @route /api/tenders/:tender_id/attachments/:attachment_id
+//  * @method DELETE
+//  * @access private - PUBLISHER
+//  */
+// router.delete(
+//     "/:tender_id/attachments/:attachment_id",
+//     verify_token,
+//     require_permission("TENDER_ATTACHMENT_UPDATE"),
+//     asyncHandler(async (req, res) => {
+//         const { tender_id, attachment_id } = req.params;
 
-        const tender = await Tender.findById(tender_id);
-        if (!tender) {
-            return res.status(404).json({
-                message: "Tender Not Found.",
-                data: null,
-                status: 404,
-            });
-        }
+//         const tender = await Tender.findById(tender_id);
+//         if (!tender) {
+//             return res.status(404).json({
+//                 message: "Tender Not Found.",
+//                 data: null,
+//                 status: 404,
+//             });
+//         }
 
-        if (tender.status !== "DRAFT") {
-            return res.status(403).json({
-                message:
-                    "Tender attachments can only be deleted while the tender is in DRAFT or CANCELLED status.",
-                data: null,
-                status: 403,
-            });
-        }
+//         if (tender.status !== "DRAFT") {
+//             return res.status(403).json({
+//                 message:
+//                     "Tender attachments can only be deleted while the tender is in DRAFT or CANCELLED status.",
+//                 data: null,
+//                 status: 403,
+//             });
+//         }
 
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(404).json({
-                message: "User Not Found.",
-                data: null,
-                status: 404,
-            });
-        }
-        if (!user.org_id) {
-            return res.status(403).json({
-                message: "User is not associated with an organization.",
-                data: null,
-                status: 403,
-            });
-        }
+//         const user = await User.findById(req.user.id);
+//         if (!user) {
+//             return res.status(404).json({
+//                 message: "User Not Found.",
+//                 data: null,
+//                 status: 404,
+//             });
+//         }
+//         if (!user.org_id) {
+//             return res.status(403).json({
+//                 message: "User is not associated with an organization.",
+//                 data: null,
+//                 status: 403,
+//             });
+//         }
 
-        if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
-            return res.status(403).json({
-                message: "You are not authorized to modify this tender.",
-                data: null,
-                status: 403,
-            });
-        }
+//         if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
+//             return res.status(403).json({
+//                 message: "You are not authorized to modify this tender.",
+//                 data: null,
+//                 status: 403,
+//             });
+//         }
 
-        const attachment = await TenderAttachment.findOne({
-            _id: attachment_id,
-            tender_id: tender._id,
-        });
-        if (!attachment) {
-            return res.status(404).json({
-                message: "Tender Attachment Not Found.",
-                data: null,
-                status: 404,
-            });
-        }
+//         const attachment = await TenderAttachment.findOne({
+//             _id: attachment_id,
+//             tender_id: tender._id,
+//         });
+//         if (!attachment) {
+//             return res.status(404).json({
+//                 message: "Tender Attachment Not Found.",
+//                 data: null,
+//                 status: 404,
+//             });
+//         }
 
-        if (attachment.file_path && fs.existsSync(attachment.file_path)) {
-            fs.unlinkSync(attachment.file_path);
-        }
+//         if (attachment.file_path && fs.existsSync(attachment.file_path)) {
+//             fs.unlinkSync(attachment.file_path);
+//         }
 
-        await TenderAttachment.deleteOne({
-            _id: attachment._id,
-        });
+//         await TenderAttachment.deleteOne({
+//             _id: attachment._id,
+//         });
 
-        res.status(200).json({
-            message: "Tender Attachment Deleted Successfully.",
-            data: null,
-            status: 200,
-        });
-    }),
-);
+//         res.status(200).json({
+//             message: "Tender Attachment Deleted Successfully.",
+//             data: null,
+//             status: 200,
+//         });
+//     }),
+// );
 
 // change status of tender
 
@@ -629,7 +628,7 @@ router.delete(
 router.post(
     "/:tender_id/publish",
     verify_token,
-    authorizeRoles("PUBLISHER"),
+    require_permission("TENDER_PUBLISH"),
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
 
@@ -716,7 +715,7 @@ router.post(
 router.post(
     "/:tender_id/cancel",
     verify_token,
-    authorizeRoles("PUBLISHER"),
+    require_permission("TENDER_CANCEL"),
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
 

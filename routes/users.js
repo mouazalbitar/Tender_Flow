@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const { verify_token } = require("../middlewares/verify_token");
-const { authorizeRoles } = require("../middlewares/role_check");
+const {
+    require_permission,
+} = require("../middlewares/permission_middleware.js");
 const { User } = require("../models/User");
 const {
     create_user_validation,
@@ -23,7 +25,7 @@ const upload_id_cards = require("../middlewares/upload_id_cards");
 router.get(
     "/",
     verify_token,
-    authorizeRoles("ADMIN"),
+    require_permission("USER_READ"),
     asyncHandler(async (req, res) => {
         const users = await User.find();
         res.status(200).json({
@@ -43,6 +45,7 @@ router.get(
 router.get(
     "/:id",
     verify_token,
+    require_permission("USER_READ"),
     asyncHandler(async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) {
@@ -69,7 +72,7 @@ router.get(
 router.post(
     "/",
     verify_token,
-    authorizeRoles("ADMIN"),
+    require_permission("USER_CREATE"),
     asyncHandler(async (req, res) => {
         console.log(req.user);
         const { error } = create_user_validation(req.body);
@@ -117,6 +120,7 @@ router.post(
 router.put(
     "/change_phone",
     verify_token,
+    require_permission("USER_UPDATE"),
     asyncHandler(async (req, res) => {
         const { error, value } = update_phone_number(req.body);
         if (error) {
@@ -138,7 +142,8 @@ router.put(
 
         if (user.phone === value.phone) {
             return res.status(400).json({
-                message: "The new phone number is the same as the current phone number.",
+                message:
+                    "The new phone number is the same as the current phone number.",
                 data: null,
                 status: 400,
             });
@@ -150,7 +155,8 @@ router.put(
         });
         if (existing_user) {
             return res.status(409).json({
-                message: "Phone number is already associated with another account.",
+                message:
+                    "Phone number is already associated with another account.",
                 data: null,
                 status: 409,
             });
@@ -160,7 +166,8 @@ router.put(
         user.phone_verified = false;
         await user.save();
         return res.status(200).json({
-            message: "Phone number updated successfully. Verification is required.",
+            message:
+                "Phone number updated successfully. Verification is required.",
             data: {
                 phone: user.phone,
                 phone_verified: user.phone_verified,
@@ -179,6 +186,7 @@ router.put(
 router.put(
     "/:id",
     verify_token,
+    require_permission("USER_UPDATE"),
     upload_id_cards.fields([
         { name: "front", maxCount: 1 },
         { name: "back", maxCount: 1 },
@@ -221,7 +229,6 @@ router.put(
     }),
 );
 
-
 /**
  * @description delete user by id
  * @route /api/users/:id
@@ -231,6 +238,7 @@ router.put(
 router.delete(
     "/:id",
     verify_token,
+    require_permission("USER_DELETE"),
     asyncHandler(async (req, res) => {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
@@ -258,7 +266,7 @@ router.delete(
 router.put(
     "/accept/:id",
     verify_token,
-    authorizeRoles("ADMIN"),
+    require_permission("USER_CHANGE_STATUS"),
     asyncHandler(async (req, res) => {
         const user = await User.findByIdAndUpdate(
             req.params.id,
@@ -302,7 +310,7 @@ router.put(
 router.put(
     "/reject/:id",
     verify_token,
-    authorizeRoles("ADMIN"),
+    require_permission("USER_CHANGE_STATUS"),
     asyncHandler(async (req, res) => {
         const { error } = reject_user_validation(req.body);
         if (error) {
@@ -388,9 +396,16 @@ router.put(
 router.put(
     "/ban/:id",
     verify_token,
-    authorizeRoles("ADMIN"),
+    require_permission("USER_CHANGE_STATUS"),
     asyncHandler(async (req, res) => {
         const { error } = bann_user_validation(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: `Validation Error: ${error.details[0].message}`,
+                data: null,
+                status: 400,
+            });
+        }
         const user = await User.findByIdAndUpdate(
             req.params.id,
             { status: "BANNED", bann_message: req.body.bann_message },
