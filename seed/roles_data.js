@@ -18,6 +18,7 @@ const roles = [
             "TENDER_CANCEL",
             "TENDER_CLOSE",
             "TENDER_REPUBLISH",
+            "TENDER_VIEW_ALL",
 
             "BID_CREATE",
             "BID_READ",

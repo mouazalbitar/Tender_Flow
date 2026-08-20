@@ -3,6 +3,9 @@ const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
+const {
+    require_permission,
+} = require("../middlewares/permission_middleware.js");
 const { Tender } = require("../models/Tender");
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
@@ -29,7 +32,7 @@ const fs = require("fs");
 router.get(
     "/all",
     verify_token,
-    authorizeRoles("ADMIN"),
+    require_permission("TENDER_VIEW_ALL"),
     asyncHandler(async (req, res) => {
         const tenders = await Tender.find().populate("publisher_org_id").sort({
             createdAt: -1,
@@ -52,7 +55,7 @@ router.get(
 router.get(
     "/",
     verify_token,
-    authorizeRoles("PUBLISHER", "EXECUTOR"),
+    require_permission("TENDER_READ"),
     asyncHandler(async (req, res) => {
         let tenders;
         if (req.user.type === "PUBLISHER") {
@@ -83,7 +86,7 @@ router.get(
 router.post(
     "/",
     verify_token,
-    authorizeRoles("PUBLISHER"),
+    require_permission("TENDER_CREATE"),
     asyncHandler(async (req, res) => {
         const { error, value } = create_tender_validation(req.body);
 
@@ -156,7 +159,7 @@ router.post(
 router.put(
     "/:tender_id",
     verify_token,
-    authorizeRoles("PUBLISHER"),
+    require_permission("TENDER_UPDATE"),
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
 
