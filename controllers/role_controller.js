@@ -38,10 +38,7 @@ const create_role = asyncHandler(async (req, res) => {
 });
 
 const update_role = asyncHandler(async (req, res) => {
-    const role = await role_service.update_role(
-        req.params.id,
-        req.body,
-    );
+    const role = await role_service.update_role(req.params.id, req.body);
 
     return res.status(200).json({
         message: "Role updated successfully.",
@@ -71,11 +68,25 @@ const add_permission_to_role = asyncHandler(async (req, res) => {
     });
 });
 
+const remove_permission_from_role = asyncHandler(async (req, res) => {
+    const role = await role_service.remove_permission_from_role(
+        req.params.role_id,
+        req.params.permission_id,
+    );
+
+    return res.status(200).json({
+        message: "Permission removed from role successfully.",
+        data: role,
+    });
+});
+
+
 module.exports = {
     get_roles,
     get_role_by_id,
     create_role,
     update_role,
     // delete_role,
-    add_permission_to_role
+    add_permission_to_role,
+    remove_permission_from_role,
 };

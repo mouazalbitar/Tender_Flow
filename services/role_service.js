@@ -194,11 +194,43 @@ const add_permission_to_role = async (role_id, permission_id) => {
         .lean();
 };
 
+const remove_permission_from_role = async (role_id, permission_id) => {
+    const role = await Role.findById(role_id);
+
+    if (!role) {
+        const error = new Error("Role not found.");
+        error.status = 404;
+        throw error;
+    }
+
+    const permission_index = role.permissions.findIndex(
+        (permission) => permission.toString() === permission_id,
+    );
+
+    if (permission_index === -1) {
+        const error = new Error("Permission is not assigned to this role.");
+        error.status = 404;
+        throw error;
+    }
+
+    role.permissions.splice(permission_index, 1);
+
+    await role.save();
+
+    return await Role.findById(role_id)
+        .populate({
+            path: "permissions",
+            select: "code name name_ar module is_active",
+        })
+        .lean();
+};
+
 module.exports = {
     get_roles,
     get_role_by_id,
     create_role,
     update_role,
     // delete_role,
-    add_permission_to_role
+    add_permission_to_role,
+    remove_permission_from_role
 };

@@ -36,8 +36,23 @@ const get_role_validation = Joi.object({
     allowUnknown: false,
 });
 
+const add_permission_to_role_validation = Joi.object({
+    permission_id: Joi.string().hex().length(24).required(),
+}).options({
+    allowUnknown: false,
+});
+
+const remove_permission_from_role_validation = Joi.object({
+    role_id: Joi.string().hex().length(24).required(),
+    permission_id: Joi.string().hex().length(24).required(),
+}).options({
+    allowUnknown: false,
+});
+
 module.exports = {
     create_role_validation,
     update_role_validation,
     get_role_validation,
+    add_permission_to_role_validation,
+    remove_permission_from_role_validation,
 };
