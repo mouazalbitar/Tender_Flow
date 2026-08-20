@@ -12,6 +12,10 @@ const orgs = [
         commercial_register_date: "2024-01-01",
         license_num: "test1",
         license_date: "2024-01-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000003"),
@@ -24,6 +28,10 @@ const orgs = [
         commercial_register_date: "2023-03-15",
         license_num: "LIC-10003",
         license_date: "2023-04-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000004"),
@@ -36,6 +44,10 @@ const orgs = [
         commercial_register_date: "2022-06-20",
         license_num: "LIC-10004",
         license_date: "2022-07-05",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000005"),
@@ -48,6 +60,10 @@ const orgs = [
         commercial_register_date: "2023-09-10",
         license_num: "LIC-10005",
         license_date: "2023-10-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000006"),
@@ -60,6 +76,10 @@ const orgs = [
         commercial_register_date: "2021-11-25",
         license_num: "LIC-10006",
         license_date: "2021-12-10",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000007"),
@@ -72,6 +92,10 @@ const orgs = [
         commercial_register_date: "2024-02-12",
         license_num: "LIC-10007",
         license_date: "2024-03-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000008"),
@@ -84,6 +108,10 @@ const orgs = [
         commercial_register_date: "2022-05-18",
         license_num: "LIC-10008",
         license_date: "2022-06-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000009"),
@@ -96,6 +124,10 @@ const orgs = [
         commercial_register_date: "2023-07-22",
         license_num: "LIC-10009",
         license_date: "2023-08-05",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000010"),
@@ -108,6 +140,10 @@ const orgs = [
         commercial_register_date: "2022-02-10",
         license_num: "LIC-10010",
         license_date: "2022-03-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
 
     {
@@ -121,6 +157,10 @@ const orgs = [
         commercial_register_date: "2021-05-15",
         license_num: "LIC-10011",
         license_date: "2021-06-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000012"),
@@ -133,6 +173,10 @@ const orgs = [
         commercial_register_date: "2023-01-20",
         license_num: "LIC-10012",
         license_date: "2023-02-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000013"),
@@ -145,6 +189,10 @@ const orgs = [
         commercial_register_date: "2022-08-12",
         license_num: "LIC-10013",
         license_date: "2022-09-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000014"),
@@ -157,6 +205,10 @@ const orgs = [
         commercial_register_date: "2024-01-15",
         license_num: "LIC-10014",
         license_date: "2024-02-01",
+        commercial_register:
+            "/uploads/organizations/commercial_register/commercial_register.jpg",
+        license: "/uploads/organizations/licenses/licenses.jpg",
+        logo: "/uploads/logos/logo1.jpg",
     },
 ];
 

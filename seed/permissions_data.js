@@ -4,7 +4,6 @@ const permissions = [
     // ==================================================
     // TENDER
     // ==================================================
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000001"),
         code: "TENDER_CREATE",
@@ -14,7 +13,6 @@ const permissions = [
         description: "Allows the user to create a new tender.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000002"),
         code: "TENDER_READ",
@@ -24,7 +22,6 @@ const permissions = [
         description: "Allows the user to view tenders.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000003"),
         code: "TENDER_UPDATE",
@@ -34,7 +31,6 @@ const permissions = [
         description: "Allows the user to update tender information.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000004"),
         code: "TENDER_DELETE",
@@ -44,7 +40,6 @@ const permissions = [
         description: "Allows the user to delete a tender.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000005"),
         code: "TENDER_PUBLISH",
@@ -54,7 +49,6 @@ const permissions = [
         description: "Allows the user to publish a tender.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000006"),
         code: "TENDER_CANCEL",
@@ -64,7 +58,6 @@ const permissions = [
         description: "Allows the user to cancel a tender.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000007"),
         code: "TENDER_CLOSE",
@@ -74,7 +67,6 @@ const permissions = [
         description: "Allows the user to close a tender.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000008"),
         code: "TENDER_REPUBLISH",
@@ -84,7 +76,6 @@ const permissions = [
         description: "Allows the user to republish a tender.",
         is_active: true,
     },
-
     {
         _id: new mongoose.Types.ObjectId("68b000000000000000000055"),
         code: "TENDER_VIEW_ALL",
