@@ -295,7 +295,7 @@ const users = [
         _id: new mongoose.Types.ObjectId("66b000000000000000000a54"),
         org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_5),
         role_id: new mongoose.Types.ObjectId(ROLE_IDS.EXECUTOR_MANAGER),
-        status: "ACTIVE",
+        status: "PENDING",
         type: "EXECUTOR",
         f_name: "Noah",
         l_name: "Clark",
@@ -312,7 +312,7 @@ const users = [
         _id: new mongoose.Types.ObjectId("66b000000000000000000a55"),
         org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_6),
         role_id: new mongoose.Types.ObjectId(ROLE_IDS.EXECUTOR_MANAGER),
-        status: "ACTIVE",
+        status: "REJECTED",
         type: "EXECUTOR",
         f_name: "Lucas",
         l_name: "Young",
@@ -324,12 +324,13 @@ const users = [
         password: bcrypt.hashSync("executor6", salt),
         id_card_front: "/uploads/executor/id_cards/id_card_152kf874(55).jpg",
         id_card_back: "/uploads/executor/id_cards/id_card_152kf874(55).jpg",
+        reject_message: "rejected rejected rejected rejected"
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a56"),
         org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_7),
         role_id: new mongoose.Types.ObjectId(ROLE_IDS.EXECUTOR_MANAGER),
-        status: "ACTIVE",
+        status: "BANNED",
         type: "EXECUTOR",
         f_name: "Alexander",
         l_name: "Davis",
@@ -341,6 +342,7 @@ const users = [
         password: bcrypt.hashSync("executor7", salt),
         id_card_front: "/uploads/executor/id_cards/id_card_152kf874(56).jpg",
         id_card_back: "/uploads/executor/id_cards/id_card_152kf874(56).jpg",
+        bann_message: "banned banned banned banned"
     },
 ];
 
