@@ -80,8 +80,8 @@ const users = [
         phone: "+963999999910",
         username: "pub_manag1",
         password: bcrypt.hashSync("pub_manag1", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(10).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(10).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(1).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(1).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a11"),
@@ -97,8 +97,8 @@ const users = [
         phone: "+963999999911",
         username: "emp_pub1",
         password: bcrypt.hashSync("emp_pub1", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(11).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(11).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(2).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(2).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a12"),
@@ -114,8 +114,8 @@ const users = [
         phone: "+963999999912",
         username: "mem_pub1",
         password: bcrypt.hashSync("mem_pub1", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(12).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(12).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(2).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(2).jpg",
     },
     // PUBLISHER 2
     {
@@ -132,8 +132,8 @@ const users = [
         phone: "+963999999913",
         username: "pub_manag2",
         password: bcrypt.hashSync("pub_manag2", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(13).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(13).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(3).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(3).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a14"),
@@ -167,8 +167,8 @@ const users = [
         phone: "+963999999915",
         username: "pub_manag3",
         password: bcrypt.hashSync("pub_manag3", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(15).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(15).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
     },
     // PUBLISHER 4
     {
@@ -185,8 +185,8 @@ const users = [
         phone: "+963999999916",
         username: "pub_manag4",
         password: bcrypt.hashSync("pub_manag4", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(16).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(16).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(6).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(6).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a17"),
@@ -202,8 +202,8 @@ const users = [
         phone: "+963999999917",
         username: "emp_pub3",
         password: bcrypt.hashSync("emp_pub3", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(17).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(17).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(7).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(7).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a18"),
@@ -219,8 +219,8 @@ const users = [
         phone: "+963999999918",
         username: "mem_pub2",
         password: bcrypt.hashSync("mem_pub2", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(18).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(18).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(8).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(8).jpg",
     },
     // EXECUTOR MANAGER
     {
@@ -237,8 +237,8 @@ const users = [
         phone: "+963999999950",
         username: "executor1",
         password: bcrypt.hashSync("executor1", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(50).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(50).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a51"),
@@ -254,8 +254,8 @@ const users = [
         phone: "+963999999951",
         username: "executor2",
         password: bcrypt.hashSync("executor2", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(51).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(51).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a52"),
@@ -271,8 +271,8 @@ const users = [
         phone: "+963999999952",
         username: "executor3",
         password: bcrypt.hashSync("executor3", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(52).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(52).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(2).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(2).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a53"),
@@ -288,8 +288,8 @@ const users = [
         phone: "+963999999953",
         username: "executor4",
         password: bcrypt.hashSync("executor4", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(53).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(53).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(3).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(3).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a54"),
@@ -305,8 +305,8 @@ const users = [
         phone: "+963999999954",
         username: "executor5",
         password: bcrypt.hashSync("executor5", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(54).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(54).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
     },
     {
         _id: new mongoose.Types.ObjectId("66b000000000000000000a55"),
@@ -322,8 +322,8 @@ const users = [
         phone: "+963999999955",
         username: "executor6",
         password: bcrypt.hashSync("executor6", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(55).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(55).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(5).jpg",
         reject_message: "rejected rejected rejected rejected"
     },
     {
@@ -340,8 +340,8 @@ const users = [
         phone: "+963999999956",
         username: "executor7",
         password: bcrypt.hashSync("executor7", salt),
-        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(56).jpg",
-        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(56).jpg",
+        id_card_front: "/uploads/executor/id_cards/id_card_152kf874(6).jpg",
+        id_card_back: "/uploads/executor/id_cards/id_card_152kf874(6).jpg",
         bann_message: "banned banned banned banned"
     },
 ];
