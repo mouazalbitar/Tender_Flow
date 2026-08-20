@@ -199,21 +199,6 @@ const bids = [
         submitted_at: new Date("2026-08-23T12:00:00.000Z"),
     },
 
-    {
-        _id: new mongoose.Types.ObjectId("68b000000000000000000013"),
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000007"),
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000010",
-        ),
-        offered_value: 2340000,
-        currency: "USD",
-        technical_proposal_file:
-            "/uploads/executor/bids/technical_proposal_013.pdf",
-        notes: "Detailed technical and financial proposal.",
-        status: "SUBMITTED",
-        submitted_at: new Date("2026-08-24T15:30:00.000Z"),
-    },
-
     // ==========================================
     // TENDER 010 - Homs Industrial Zone Infrastructure
     // Publisher: Eastern Infrastructure Authority
@@ -280,21 +265,6 @@ const bids = [
         submitted_at: new Date("2026-08-11T17:00:00.000Z"),
     },
 
-    {
-        _id: new mongoose.Types.ObjectId("68b000000000000000000018"),
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000010"),
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000010",
-        ),
-        offered_value: 1695000000,
-        currency: "SYP",
-        technical_proposal_file:
-            "/uploads/executor/bids/technical_proposal_018.pdf",
-        notes: "Technical proposal includes modern infrastructure solutions.",
-        status: "WITHDRAWN",
-        submitted_at: new Date("2026-08-12T11:45:00.000Z"),
-    },
-
     // ==========================================
     // TENDER 012 - Damascus Public Hospital Expansion
     // Publisher: National Construction Directorate
@@ -359,36 +329,6 @@ const bids = [
         notes: "Detailed engineering and construction proposal.",
         status: "REJECTED",
         submitted_at: new Date("2026-08-21T16:15:00.000Z"),
-    },
-
-    {
-        _id: new mongoose.Types.ObjectId("68b000000000000000000023"),
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000010",
-        ),
-        offered_value: 2820000000,
-        currency: "SYP",
-        technical_proposal_file:
-            "/uploads/executor/bids/technical_proposal_023.pdf",
-        notes: "Competitive offer with a detailed execution schedule.",
-        status: "SUBMITTED",
-        submitted_at: new Date("2026-08-22T12:45:00.000Z"),
-    },
-
-    {
-        _id: new mongoose.Types.ObjectId("68b000000000000000000024"),
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000011",
-        ),
-        offered_value: 2900000000,
-        currency: "SYP",
-        technical_proposal_file:
-            "/uploads/executor/bids/technical_proposal_024.pdf",
-        notes: "Full technical proposal for hospital infrastructure works.",
-        status: "SUBMITTED",
-        submitted_at: new Date("2026-08-23T09:30:00.000Z"),
     },
 ];
 

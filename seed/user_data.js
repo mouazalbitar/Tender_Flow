@@ -232,7 +232,7 @@ const users = [
         f_name: "James",
         l_name: "Wilson",
         father_name: "Robert",
-        national_num: "980000050",
+        national_num: "980000050",  
         email: "executor1@globalconstruction.com",
         phone: "+963999999950",
         username: "executor1",
