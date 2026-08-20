@@ -148,6 +148,7 @@ const send_roles = async () => {
             );
 
             role_documents.push({
+                _id: role._id,
                 code: role.code,
                 name: role.name,
                 name_ar: role.name_ar,
