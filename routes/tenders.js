@@ -77,6 +77,60 @@ router.get(
 );
 
 /**
+ * @description Get tenders filtered by category
+ * @route GET /api/tenders/filter
+ * @access private
+ */
+router.get(
+    "/filter",
+    verify_token,
+    require_permission("TENDER_READ"),
+    asyncHandler(async (req, res) => {
+        const { category } = req.query;
+
+        const allowed_categoreis = [
+            "CONSTRUCTION",
+            "ENGINEERING",
+            "IT",
+            "SUPPLY",
+            "SERVICES",
+            "MAINTENANCE",
+            "CONSULTING",
+            "ENERGY",
+            "TRANSPORTATION",
+            "MEDICAL",
+            "OTHER",
+        ];
+
+        if (!category) {
+            return res.status(400).json({
+                message: "Tender category is required.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        if (!allowed_categoreis.includes(category)) {
+            return res.status(400).json({
+                message: "Invalid tender category.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const tenders = await Tender.find({
+            category: category,
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: tenders,
+            status: 200,
+        });
+    }),
+);
+
+/**
  * @description create a new tender
  * @route /api/tenders
  * @method POST
