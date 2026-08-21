@@ -3,12 +3,82 @@ const router = express.Router();
 const asyncHandler = require("express-async-handler");
 const { verify_token } = require("../middlewares/verify_token");
 const { authorizeRoles } = require("../middlewares/role_check");
+const { require_permission } = require("../middlewares/permission_middleware");
 const { Tender } = require("../models/Tender");
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
 const { Bid } = require("../models/Bid");
 const { create_bid_validation } = require("../validators/bid_validation");
 const upload_bid = require("../middlewares/upload_bid");
+
+/**
+ * @description Get all bids for admin or publisher organization
+ * @route /api/bids
+ * @method GET
+ * @access private - ADMIN / PUBLISHER
+ */
+router.get(
+    "/",
+    verify_token,
+    require_permission("BID_READ"),
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        let bids;
+        // ADMIN
+        if (user.type === "ADMIN") {
+            bids = await Bid.find()
+                .populate(
+                    "tender_id",
+                    "title status publisher_org_id submission_start submission_deadline estimated_value currency execution_location",
+                )
+                .populate("executor_org_id", "org_name")
+                .sort({ createdAt: -1 });
+        }
+        // PUBLISHER
+        else if (user.type === "PUBLISHER") {
+            if (!user.org_id) {
+                return res.status(400).json({
+                    message: "User is not associated with an organization.",
+                    data: null,
+                    status: 400,
+                });
+            }
+            const tenders = await Tender.find({
+                publisher_org_id: user.org_id,
+            }).select("_id");
+            const tender_ids = tenders.map((tender) => tender._id);
+            bids = await Bid.find({
+                tender_id: { $in: tender_ids },
+            })
+                .populate(
+                    "tender_id",
+                    "title status publisher_org_id submission_start submission_deadline estimated_value currency execution_location",
+                )
+                .populate("executor_org_id", "org_name")
+                .sort({ createdAt: -1 });
+        } else {
+            return res.status(403).json({
+                message: "You are not authorized to view bids.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Bids retrieved successfully.",
+            data: bids,
+            status: 200,
+        });
+    }),
+);
 
 /**
  * @description Submit a bid for a tender
