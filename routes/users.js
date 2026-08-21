@@ -15,6 +15,7 @@ const {
 } = require("../validators/user_validation");
 const bcrypt = require("bcryptjs");
 const upload_id_cards = require("../middlewares/upload_id_cards");
+const { sendAccountApprovalEmail } = require("../services/email.service");
 
 /**
  * @description get all users
@@ -268,17 +269,18 @@ router.put(
     verify_token,
     require_permission("USER_CHANGE_STATUS"),
     asyncHandler(async (req, res) => {
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            { status: "ACTIVE" },
-            { new: true },
-        );
-        if (req.user.id === req.params.id)
+        // Prevent user from accepting himself
+        if (req.user.id.toString() === req.params.id.toString()) {
             return res.status(403).json({
                 message: "You cannot do it for yourself.",
                 data: null,
                 status: 403,
             });
+        }
+
+        // Find the user first
+        const user = await User.findById(req.params.id);
+
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
@@ -286,13 +288,25 @@ router.put(
                 status: 404,
             });
         }
-        if (req.user.id.toString() === req.params.id)
-            return res.status(403).json({
-                message: "You cannot ban yourself.",
+
+        // Make sure the account is actually pending
+        if (user.status !== "PENDING") {
+            return res.status(400).json({
+                message: "User account is not pending.",
                 data: null,
-                status: 403,
+                status: 400,
             });
+        }
+
+        // Change status to ACTIVE
+        user.status = "ACTIVE";
+
+        await user.save();
+
+        await sendAccountApprovalEmail(user);
+
         const { password, ...user_data } = user._doc;
+
         res.status(200).json({
             message: "The Operation was Successful.",
             data: user_data,

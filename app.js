@@ -6,7 +6,6 @@ const logger = require("./middlewares/logger");
 const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env" });
-// const role_routes = require("./routes/role_routes");
 
 // connect to database
 connectToDB();
