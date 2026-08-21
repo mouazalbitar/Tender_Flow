@@ -60,13 +60,17 @@ router.get(
         if (req.user.type === "PUBLISHER") {
             tenders = await Tender.find({
                 publisher_org_id: req.user.org_id,
-            }).sort({ createdAt: -1 });
+            })
+                .populate("publisher_org_id")
+                .sort({ createdAt: -1 });
         } else if (req.user.type === "EXECUTOR") {
             tenders = await Tender.find({
                 status: {
                     $in: ["PUBLISHED", "OPEN", "REPUBLISHED"],
                 },
-            }).sort({ createdAt: -1 });
+            })
+                .populate("publisher_org_id")
+                .sort({ createdAt: -1 });
         }
         res.status(200).json({
             message: "The Operation was Successfully.",
