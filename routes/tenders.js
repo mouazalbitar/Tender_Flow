@@ -522,7 +522,11 @@ router.get(
     asyncHandler(async (req, res) => {
         const { tender_id } = req.params;
 
-        const tender = await Tender.findById(tender_id);
+        // Find tender
+        const tender = await Tender.findById(tender_id).select(
+            "_id publisher_org_id status attachment_price",
+        );
+
         if (!tender) {
             return res.status(404).json({
                 message: "Tender Not Found.",
@@ -531,9 +535,9 @@ router.get(
             });
         }
 
-        // PUBLISHER Can only view attachments of own tenders
         if (req.user.type === "PUBLISHER") {
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.user.id).select("org_id");
+
             if (!user) {
                 return res.status(404).json({
                     message: "User Not Found.",
@@ -541,6 +545,7 @@ router.get(
                     status: 404,
                 });
             }
+
             if (!user.org_id) {
                 return res.status(403).json({
                     message: "User is not associated with an organization.",
@@ -548,6 +553,7 @@ router.get(
                     status: 403,
                 });
             }
+
             if (tender.publisher_org_id.toString() !== user.org_id.toString()) {
                 return res.status(403).json({
                     message:
@@ -558,9 +564,8 @@ router.get(
             }
         }
 
-        // EXECUTOR can only view attachments of available tenders
-        // after purchasing them.
         if (req.user.type === "EXECUTOR") {
+            // Check tender status
             if (!["PUBLISHED", "OPEN", "REPUBLISHED"].includes(tender.status)) {
                 return res.status(403).json({
                     message: "This tender is not available.",
@@ -568,8 +573,7 @@ router.get(
                     status: 403,
                 });
             }
-
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.user.id).select("org_id");
             if (!user) {
                 return res.status(404).json({
                     message: "User Not Found.",
@@ -585,7 +589,6 @@ router.get(
                 });
             }
 
-            // Free attachments do not require a purchase
             if (tender.attachment_price > 0) {
                 const purchase = await TenderPurchase.findOne({
                     tender_id: tender._id,
@@ -606,7 +609,8 @@ router.get(
         const attachments = await TenderAttachment.find({
             tender_id: tender._id,
         }).sort({ createdAt: 1 });
-        res.status(200).json({
+
+        return res.status(200).json({
             message: "Tender Attachments Retrieved Successfully.",
             data: attachments,
             status: 200,
