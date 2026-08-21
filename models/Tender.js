@@ -75,6 +75,11 @@ const TenderSchema = new mongoose.Schema(
                 return this.estimated_value != null;
             },
         },
+        attachment_price: {
+            type: Number,
+            min: 0,
+            default: 0,
+        },
         execution_location: {
             type: String,
             required: true,

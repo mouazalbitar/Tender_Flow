@@ -44,6 +44,7 @@ const tender_schema = {
         .label("Submission Deadline"),
     estimated_value: joi.number().min(0).label("Estimated Value"),
     currency: joi.string().valid("SYP", "USD", "EUR").label("Currency"),
+    attachment_price: joi.number().min(0).label("Attachment Price"),
     execution_location: joi
         .string()
         .min(3)
@@ -62,6 +63,7 @@ function create_tender_validation(obj) {
             submission_deadline: tender_schema.submission_deadline.required(),
             estimated_value: tender_schema.estimated_value.optional(),
             currency: tender_schema.currency.optional(),
+            attachment_price: tender_schema.attachment_price.optional(),
             execution_location: tender_schema.execution_location.required(),
         })
         .messages(messages.messages_en);
@@ -80,6 +82,7 @@ function update_tender_validation(obj) {
             submission_deadline: tender_schema.submission_deadline.optional(),
             estimated_value: tender_schema.estimated_value.optional(),
             currency: tender_schema.currency.optional(),
+            attachment_price: tender_schema.attachment_price.optional(),
             execution_location: tender_schema.execution_location.optional(),
         })
         .messages(messages.messages_en);

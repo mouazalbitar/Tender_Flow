@@ -11,6 +11,7 @@ const { Tender } = require("../models/Tender");
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
 const { TenderAttachment } = require("../models/TenderAttachment");
+const { TenderPurchase } = require("../models/TenderPurchase");
 const {
     create_tender_validation,
     update_tender_validation,
@@ -379,6 +380,108 @@ router.put(
 );
 
 /**
+ * @description Purchase tender attachments
+ * @route /api/tenders/:tender_id/purchase
+ * @method POST
+ * @access private - EXECUTOR
+ */
+router.post(
+    "/:tender_id/purchase",
+    verify_token,
+    require_permission("TENDER_ATTACHMENT_READ"),
+    asyncHandler(async (req, res) => {
+        const { tender_id } = req.params;
+
+        // Only EXECUTOR can purchase tender attachments
+        if (req.user.type !== "EXECUTOR") {
+            return res.status(403).json({
+                message: "Only executors can purchase tender attachments.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        // Find user
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        // Find tender
+        const tender = await Tender.findById(tender_id);
+
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        // Tender must be available
+        if (!["PUBLISHED", "OPEN", "REPUBLISHED"].includes(tender.status)) {
+            return res.status(403).json({
+                message: "This tender is not available for purchase.",
+                data: null,
+                status: 403,
+            });
+        }
+
+        // If attachments are free, no purchase is required
+        if (tender.attachment_price === 0) {
+            return res.status(400).json({
+                message: "Tender attachments are free.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        // Check if already purchased
+        const existingPurchase = await TenderPurchase.findOne({
+            tender_id: tender._id,
+            executor_org_id: user.org_id,
+        });
+
+        if (existingPurchase) {
+            return res.status(409).json({
+                message: "You have already purchased the tender attachments.",
+                data: existingPurchase,
+                status: 409,
+            });
+        }
+
+        // Simulate successful payment
+        const purchase = new TenderPurchase({
+            tender_id: tender._id,
+            executor_org_id: user.org_id,
+            amount: tender.attachment_price,
+            currency: tender.currency,
+            payment_status: "PAID",
+        });
+
+        const result = await purchase.save();
+        res.status(201).json({
+            message: "Tender Attachments Purchased Successfully.",
+            data: result,
+            status: 201,
+        });
+    }),
+);
+
+/**
  * @description Get tender attachments
  * @route /api/tenders/:tender_id/attachments
  * @method GET
@@ -427,7 +530,8 @@ router.get(
             }
         }
 
-        // EXECUTOR Can only view attachments of available tenders
+        // EXECUTOR can only view attachments of available tenders
+        // after purchasing them.
         if (req.user.type === "EXECUTOR") {
             if (!["PUBLISHED", "OPEN", "REPUBLISHED"].includes(tender.status)) {
                 return res.status(403).json({
@@ -435,6 +539,39 @@ router.get(
                     data: null,
                     status: 403,
                 });
+            }
+
+            const user = await User.findById(req.user.id);
+            if (!user) {
+                return res.status(404).json({
+                    message: "User Not Found.",
+                    data: null,
+                    status: 404,
+                });
+            }
+            if (!user.org_id) {
+                return res.status(403).json({
+                    message: "User is not associated with an organization.",
+                    data: null,
+                    status: 403,
+                });
+            }
+
+            // Free attachments do not require a purchase
+            if (tender.attachment_price > 0) {
+                const purchase = await TenderPurchase.findOne({
+                    tender_id: tender._id,
+                    executor_org_id: user.org_id,
+                    payment_status: "PAID",
+                });
+                if (!purchase) {
+                    return res.status(403).json({
+                        message:
+                            "You must purchase the tender attachments first.",
+                        data: null,
+                        status: 403,
+                    });
+                }
             }
         }
 
