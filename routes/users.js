@@ -299,6 +299,7 @@ router.put(
 
         // Change status to ACTIVE
         user.status = "ACTIVE";
+        user.role_id = new mongoose.Types.ObjectId("69b000000000000000000003");;
 
         await user.save();
 
