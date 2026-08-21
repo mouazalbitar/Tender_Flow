@@ -9,19 +9,27 @@ const require_permission = (permission_code) => {
                 status: 401,
             });
         }
-
+        
         const user = await User.findById(req.user.id)
-            .populate({
-                path: "role_id",
+        .populate({
+            path: "role_id",
+            match: { is_active: true },
+            populate: {
+                path: "permissions",
                 match: { is_active: true },
-                populate: {
-                    path: "permissions",
-                    match: { is_active: true },
-                    select: "code is_active",
-                },
-            })
-            .lean();
-
+                select: "code is_active",
+            },
+        })
+        .lean();
+        
+        // console.log("USER:", user._id);
+        // console.log("ROLE:", user.role_id.code);
+        // console.log(
+        //     "PERMISSIONS:",
+        //     user.role_id.permissions.map((permission) => permission.code),
+        // );
+        // console.log("REQUIRED:", permission_code);
+        
         if (!user) {
             return res.status(401).json({
                 message: "User not found.",
