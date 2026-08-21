@@ -187,7 +187,6 @@ router.put(
 router.put(
     "/:id",
     verify_token,
-    require_permission("USER_UPDATE"),
     upload_id_cards.fields([
         { name: "front", maxCount: 1 },
         { name: "back", maxCount: 1 },
