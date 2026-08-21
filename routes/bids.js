@@ -10,6 +10,7 @@ const { Organization } = require("../models/Organization");
 const { Bid } = require("../models/Bid");
 const { create_bid_validation } = require("../validators/bid_validation");
 const upload_bid = require("../middlewares/upload_bid");
+const { TenderPurchase } = require("../models/TenderPurchase");
 
 /**
  * @description Get all bids for admin or publisher organization
@@ -142,6 +143,23 @@ router.post(
                 data: null,
                 status: 400,
             });
+        }
+        // Check tender attachment purchase
+        if (tender.attachment_price > 0) {
+            const purchase = await TenderPurchase.findOne({
+                tender_id: tender._id,
+                executor_org_id: user.org_id,
+                payment_status: "PAID",
+            });
+
+            if (!purchase) {
+                return res.status(403).json({
+                    message:
+                        "You must purchase the tender attachments before submitting a bid.",
+                    data: null,
+                    status: 403,
+                });
+            }
         }
 
         const user = await User.findById(req.user.id);

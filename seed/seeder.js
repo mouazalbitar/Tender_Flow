@@ -12,6 +12,8 @@ const { Permission } = require("../models/Permission");
 const { permissions } = require("./permissions_data");
 const { Role } = require("../models/Role");
 const { roles } = require("./roles_data");
+const { TenderPurchase } = require("../models/TenderPurchase");
+const { tender_purchases } = require("./tender_purchase_data");
 
 const { connectToDB } = require("../config/db");
 
@@ -201,6 +203,36 @@ const assign_super_admin_role = async () => {
 };
 
 // =========================
+// Send tender purchases
+// =========================
+const send_tender_purchases = async () => {
+    try {
+        await TenderPurchase.insertMany(tender_purchases);
+
+        console.log("Tender purchases inserted successfully.");
+    } catch (error) {
+        console.error("Error inserting tender purchases:", error);
+
+        throw error;
+    }
+};
+
+// =========================
+// Delete tender purchases
+// =========================
+const delete_tender_purchases = async () => {
+    try {
+        await TenderPurchase.deleteMany();
+
+        console.log("Tender purchases deleted successfully.");
+    } catch (error) {
+        console.error("Error deleting tender purchases:", error);
+
+        throw error;
+    }
+};
+
+// =========================
 // Delete roles
 // =========================
 
@@ -342,8 +374,11 @@ const runSeeder = async () => {
 
             await assign_super_admin_role();
 
+            await send_tender_purchases();
+
             console.log("Seeder completed successfully.");
         } else if (process.argv[2] === "-d") {
+            await delete_tender_purchases();
             await delete_roles();
 
             await delete_permissions();
