@@ -90,6 +90,7 @@ router.post(
     "/",
     verify_token,
     authorizeRoles("EXECUTOR"),
+    require_permission("BID_CREATE"),
     upload_bid.single("technical_proposal"),
     asyncHandler(async (req, res) => {
         const { error, value } = create_bid_validation(req.body);
@@ -211,6 +212,7 @@ router.get(
     "/tender/:tender_id",
     verify_token,
     asyncHandler(async (req, res) => {
+        console.log("you are here");
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({
