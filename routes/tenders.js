@@ -5,6 +5,8 @@ const { verify_token } = require("../middlewares/verify_token");
 const {
     require_permission,
 } = require("../middlewares/permission_middleware.js");
+const { authorizeRoles } = require("../middlewares/role_check.js");
+
 const { Tender } = require("../models/Tender");
 const { User } = require("../models/User");
 const { Organization } = require("../models/Organization");
@@ -46,6 +48,59 @@ router.get(
 );
 
 /**
+ * @description Get tenders filtered by category
+ * @route GET /api/tenders/filter
+ * @access private
+ */
+router.get(
+    "/filter",
+    verify_token,
+    require_permission("TENDER_READ"),
+    asyncHandler(async (req, res) => {
+        const { category } = req.query;
+
+        const allowed_categoreis = [
+            "CONSTRUCTION",
+            "ENGINEERING",
+            "IT",
+            "SUPPLY",
+            "SERVICES",
+            "MAINTENANCE",
+            "CONSULTING",
+            "ENERGY",
+            "TRANSPORTATION",
+            "MEDICAL",
+            "OTHER",
+        ];
+
+        if (!category) {
+            return res.status(400).json({
+                message: "Tender category is required.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        if (!allowed_categoreis.includes(category)) {
+            return res.status(400).json({
+                message: "Invalid tender category.",
+                data: null,
+                status: 400,
+            });
+        }
+
+        const tenders = await Tender.find({
+            category: category,
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            message: "The Operation was Successful.",
+            data: tenders,
+            status: 200,
+        });
+    }),
+);
+/**
  * @description get tenders for users
  * @route /api/tenders
  * @method GET
@@ -56,14 +111,42 @@ router.get(
     verify_token,
     require_permission("TENDER_READ"),
     asyncHandler(async (req, res) => {
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+
+        if (!user.org_id) {
+            return res.status(403).json({
+                message: "User is not associated with an organization.",
+                data: null,
+                status: 403,
+            });
+        }
+
         let tenders;
-        if (req.user.type === "PUBLISHER") {
+
+        // ==========================================
+        // PUBLISHER
+        // ==========================================
+
+        if (user.type === "PUBLISHER") {
             tenders = await Tender.find({
-                publisher_org_id: req.user.org_id,
+                publisher_org_id: user.org_id,
             })
                 .populate("publisher_org_id")
                 .sort({ createdAt: -1 });
-        } else if (req.user.type === "EXECUTOR") {
+        }
+
+        // ==========================================
+        // EXECUTOR
+        // ==========================================
+        else if (user.type === "EXECUTOR") {
             tenders = await Tender.find({
                 status: {
                     $in: ["PUBLISHED", "OPEN", "REPUBLISHED"],
@@ -72,6 +155,18 @@ router.get(
                 .populate("publisher_org_id")
                 .sort({ createdAt: -1 });
         }
+
+        // ==========================================
+        // OTHER USER TYPES
+        // ==========================================
+        else {
+            return res.status(403).json({
+                message: "You are not authorized to view these tenders.",
+                data: null,
+                status: 403,
+            });
+        }
+
         res.status(200).json({
             message: "The Operation was Successfully.",
             data: tenders,
