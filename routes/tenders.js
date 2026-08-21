@@ -231,6 +231,34 @@ router.get(
 );
 
 /**
+ * @description Get one tender by ID
+ * @route GET /api/tenders/:tender_id
+ * @access private - PUBLISHER / EXECUTOR
+ */
+router.get(
+    "/:tender_id",
+    verify_token,
+    require_permission("TENDER_READ"),
+    asyncHandler(async (req, res) => {
+        const { tender_id } = req.params;
+        const tender =
+            await Tender.findById(tender_id).populate("publisher_org_id");
+        if (!tender) {
+            return res.status(404).json({
+                message: "Tender Not Found.",
+                data: null,
+                status: 404,
+            });
+        }
+        res.status(200).json({
+            message: "Tender Retrieved Successfully.",
+            data: tender,
+            status: 200,
+        });
+    }),
+);
+
+/**
  * @description create a new tender
  * @route /api/tenders
  * @method POST
