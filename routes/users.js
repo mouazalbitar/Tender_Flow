@@ -269,7 +269,6 @@ router.put(
     verify_token,
     require_permission("USER_CHANGE_STATUS"),
     asyncHandler(async (req, res) => {
-        // Prevent user from accepting himself
         if (req.user.id.toString() === req.params.id.toString()) {
             return res.status(403).json({
                 message: "You cannot do it for yourself.",
@@ -277,8 +276,6 @@ router.put(
                 status: 403,
             });
         }
-
-        // Find the user first
         const user = await User.findById(req.params.id);
 
         if (!user) {
@@ -288,8 +285,6 @@ router.put(
                 status: 404,
             });
         }
-
-        // Make sure the account is actually pending
         if (user.status !== "PENDING") {
             return res.status(400).json({
                 message: "User account is not pending.",
@@ -297,10 +292,8 @@ router.put(
                 status: 400,
             });
         }
-
-        // Change status to ACTIVE
         user.status = "ACTIVE";
-        user.role_id = new mongoose.Types.ObjectId("69b000000000000000000003");;
+        user.role_id = new mongoose.Types.ObjectId("69b000000000000000000003");
 
         await user.save();
 
