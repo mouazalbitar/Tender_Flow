@@ -1,292 +1,506 @@
 const mongoose = require("mongoose");
 
-const tender_purchases = [
-    // ==========================================
-    // TENDER 003
-    // ==========================================
+const ORG_IDS = {
+    EXECUTOR_1: "66b000000000000000000003", // Global Construction Group
+    EXECUTOR_2: "66b000000000000000000004", // Advanced Engineering Solutions
+    EXECUTOR_3: "66b000000000000000000007", // Modern Building Contractors
+};
 
+const tender_purchases = [
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000001"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000003"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000003",
-        ),
-
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
         amount: 100,
         currency: "USD",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-14T10:00:00.000Z"),
+        paid_at: new Date("2026-08-10T10:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000002"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000003"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000004",
-        ),
-
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
         amount: 100,
         currency: "USD",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-15T09:00:00.000Z"),
+        paid_at: new Date("2026-08-11T11:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000003"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000003"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000007",
-        ),
-
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
         amount: 100,
         currency: "USD",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-16T11:00:00.000Z"),
+        paid_at: new Date("2026-08-12T09:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000004"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000003"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000009",
-        ),
-
-        amount: 100,
-        currency: "USD",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000005"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 150000,
+        currency: "SYP",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-17T12:00:00.000Z"),
+        paid_at: new Date("2026-08-01T08:30:00.000Z"),
     },
-
-    // ==========================================
-    // TENDER 007
-    // ==========================================
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000005"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000007"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000003",
-        ),
-
-        amount: 250,
-        currency: "USD",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000005"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 150000,
+        currency: "SYP",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-19T09:00:00.000Z"),
+        paid_at: new Date("2026-08-02T10:15:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000006"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000007"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000004",
-        ),
-
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
         amount: 250,
         currency: "USD",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-20T10:00:00.000Z"),
+        paid_at: new Date("2026-08-03T12:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000007"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000007"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000007",
-        ),
-
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
         amount: 250,
         currency: "USD",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-20T11:00:00.000Z"),
+        paid_at: new Date("2026-08-04T14:20:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000008"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000007"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000009",
-        ),
-
-        amount: 250,
-        currency: "USD",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000008"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 75,
+        currency: "EUR",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-21T09:00:00.000Z"),
+        paid_at: new Date("2026-08-05T09:00:00.000Z"),
     },
-
-    // ==========================================
-    // TENDER 010
-    // ==========================================
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000009"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000010"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000003",
-        ),
-
-        amount: 150000,
-        currency: "SYP",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000008"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 75,
+        currency: "EUR",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-07T09:00:00.000Z"),
+        paid_at: new Date("2026-08-05T11:30:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000010"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000010"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000004",
-        ),
-
-        amount: 150000,
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 200000,
         currency: "SYP",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-08T10:00:00.000Z"),
+        paid_at: new Date("2026-08-06T10:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000011"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000010"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000007",
-        ),
-
-        amount: 150000,
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 200000,
         currency: "SYP",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-09T11:00:00.000Z"),
+        paid_at: new Date("2026-08-06T15:45:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000012"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000010"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000009",
-        ),
-
-        amount: 150000,
-        currency: "SYP",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 120,
+        currency: "USD",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-10T12:00:00.000Z"),
+        paid_at: new Date("2026-08-07T08:15:00.000Z"),
     },
-
-    // ==========================================
-    // TENDER 012
-    // ==========================================
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000013"),
-
         tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000003",
-        ),
-
-        amount: 200000,
-        currency: "SYP",
-
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 120,
+        currency: "USD",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-17T09:00:00.000Z"),
+        paid_at: new Date("2026-08-07T13:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000014"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000004",
-        ),
-
-        amount: 200000,
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000013"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 50000,
         currency: "SYP",
-
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-18T10:00:00.000Z"),
+        paid_at: new Date("2026-08-08T09:10:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000015"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000007",
-        ),
-
-        amount: 200000,
-        currency: "SYP",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000015"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 300,
+        currency: "USD",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-19T11:00:00.000Z"),
+        paid_at: new Date("2026-08-08T11:00:00.000Z"),
     },
-
     {
         _id: new mongoose.Types.ObjectId("68c000000000000000000016"),
-
-        tender_id: new mongoose.Types.ObjectId("67b000000000000000000012"),
-
-        executor_org_id: new mongoose.Types.ObjectId(
-            "66b000000000000000000009",
-        ),
-
-        amount: 200000,
-        currency: "SYP",
-
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000015"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 300,
+        currency: "USD",
         payment_status: "PAID",
-
-        paid_at: new Date("2026-08-20T12:00:00.000Z"),
+        paid_at: new Date("2026-08-09T10:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000017"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000015"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 300,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-09T14:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000018"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000017"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 80000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-10T09:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000019"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000018"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 50,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-10T12:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000020"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000018"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 50,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-11T10:15:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000021"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000020"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 180,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-11T15:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000022"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000020"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 180,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-12T08:45:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000023"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000022"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 100000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-12T11:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000024"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000022"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 100000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-12T16:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000025"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000023"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 400,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-13T09:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000026"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000025"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 90,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-13T10:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000027"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000025"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 90,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-13T14:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000028"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000025"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 90,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-14T08:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000029"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000027"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 220,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-14T11:20:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000030"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000028"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 300000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-14T15:10:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000031"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000028"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 300000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-15T09:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000032"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000030"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 150,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-15T12:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000033"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000030"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 150,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-16T10:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000034"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000032"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 60000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-16T14:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000035"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000032"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 60000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-17T09:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000036"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000033"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 500,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-17T11:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000037"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000035"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 250000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-18T08:15:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000038"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000035"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 250000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-18T13:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000039"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000035"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 250000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-18T16:45:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000040"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000037"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 110,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-19T09:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000041"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000038"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 130,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-19T10:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000042"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000038"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 130,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-19T14:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000043"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000040"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 175000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-20T08:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000044"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000040"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 175000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-20T11:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000045"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000042"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 350,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-20T15:20:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000046"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000042"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 350,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-21T09:10:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000047"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000043"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 85,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-21T10:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000048"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000045"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 95000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-21T12:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000049"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000045"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 95000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-21T14:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000050"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000045"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 95000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-21T16:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000051"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000047"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 280,
+        currency: "USD",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-22T08:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000052"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000048"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 160,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-22T09:30:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000053"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000048"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_3),
+        amount: 160,
+        currency: "EUR",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-22T10:15:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000054"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000050"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_1),
+        amount: 400000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-22T11:00:00.000Z"),
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c000000000000000000055"),
+        tender_id: new mongoose.Types.ObjectId("67b000000000000000000050"),
+        executor_org_id: new mongoose.Types.ObjectId(ORG_IDS.EXECUTOR_2),
+        amount: 400000,
+        currency: "SYP",
+        payment_status: "PAID",
+        paid_at: new Date("2026-08-22T11:45:00.000Z"),
     },
 ];
 

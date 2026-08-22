@@ -16,6 +16,7 @@ const {
 const bcrypt = require("bcryptjs");
 const upload_id_cards = require("../middlewares/upload_id_cards");
 const { sendAccountApprovalEmail } = require("../services/email.service");
+const mongoose = require("mongoose");
 
 /**
  * @description get all users
