@@ -5,10 +5,14 @@ const { not_found, error_handler } = require("./middlewares/errors");
 const logger = require("./middlewares/logger");
 const path = require("path");
 const dotenv = require("dotenv");
+const { startTenderStatusJob } = require("./jobs/tender_status.job");
 dotenv.config({ path: ".env" });
 
 // connect to database
 connectToDB();
+
+//run a job
+startTenderStatusJob();
 
 // apply middlewares
 app.use(express.json());
